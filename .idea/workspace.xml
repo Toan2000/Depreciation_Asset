@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="73865b11-37b1-4c33-b67e-79a48dc901bd" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="2QjhA5Wt1nXpNrHIde7PNRDSFQe" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;20&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/mac/Desktop/microservices-parent/product-service/src/main/java/com/example/produceService&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;spring.configuration.checksum&quot;: &quot;34b79dcbf0dad1b177737a2fd4480264&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="ReactorSettings">
+    <option name="notificationShown" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/product-service/src/main/java/com/example/produceService" />
+      <recent name="$PROJECT_DIR$/api-gateway/src/main/resources" />
+      <recent name="$PROJECT_DIR$/discovery-server/src/main/java/com/example/discoveryService" />
+      <recent name="$PROJECT_DIR$/discovery-server/src/main/java/config" />
+      <recent name="$PROJECT_DIR$/discovery-server/src/test" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.example.discoveryService" />
+      <recent name="com.example.orderservicems.dto" />
+    </key>
+  </component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="mvn clean verify" />
+    </option>
+  </component>
+  <component name="RunManager" selected="Spring Boot.ApiGateWayApplication">
+    <configuration name="ApiGateWayApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="api-gateway" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.apigateway.ApiGateWayApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.example.apigateway.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="DiscoveryServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="ALTERNATIVE_JRE_PATH" value="corretto-17" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <module name="discovery-server" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.discoveryService.DiscoveryServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="InventoryServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="inventory-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.inventoryservice.InventoryServiceApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.example.inventoryservice.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="OrderServiceMsApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <option name="ALTERNATIVE_JRE_PATH" value="corretto-17" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <module name="order-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.orderservicems.OrderServiceMsApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.example.orderservicems.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ProductServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="product-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.produceService.ProductServiceApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.example.produceService.ProductServiceApplication" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Spring Boot.DiscoveryServiceApplication" />
+      <item itemvalue="Spring Boot.ApiGateWayApplication" />
+      <item itemvalue="Spring Boot.InventoryServiceApplication" />
+      <item itemvalue="Spring Boot.OrderServiceMsApplication" />
+      <item itemvalue="Spring Boot.ProductServiceApplication" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Spring Boot.ApiGateWayApplication" />
+        <item itemvalue="Spring Boot.ProductServiceApplication" />
+        <item itemvalue="Spring Boot.InventoryServiceApplication" />
+        <item itemvalue="Spring Boot.OrderServiceMsApplication" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="73865b11-37b1-4c33-b67e-79a48dc901bd" name="Changes" comment="" />
+      <created>1685872753445</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1685872753445</updated>
+      <workItem from="1685872754732" duration="606000" />
+      <workItem from="1686369705807" duration="18009000" />
+      <workItem from="1686544103172" duration="12000" />
+      <workItem from="1686620720114" duration="17000" />
+      <workItem from="1686796125734" duration="59000" />
+      <workItem from="1686881208450" duration="1000" />
+      <workItem from="1687609398737" duration="4457000" />
+      <workItem from="1687614316893" duration="2531000" />
+      <workItem from="1687617324573" duration="11925000" />
+      <workItem from="1687743589743" duration="23000" />
+      <workItem from="1687849266700" duration="55000" />
+      <workItem from="1687867641876" duration="8504000" />
+      <workItem from="1687958743820" duration="6044000" />
+      <workItem from="1688013972394" duration="1000" />
+      <workItem from="1688090630350" duration="195000" />
+      <workItem from="1688098464278" duration="8000" />
+      <workItem from="1688560886959" duration="2300000" />
+      <workItem from="1688649267692" duration="4821000" />
+      <workItem from="1688718148586" duration="58000" />
+      <workItem from="1688955174275" duration="21000" />
+      <workItem from="1689172148060" duration="896000" />
+      <workItem from="1690337137433" duration="3898000" />
+      <workItem from="1690517924788" duration="346000" />
+      <workItem from="1690791440866" duration="622000" />
+      <workItem from="1690808634420" duration="654000" />
+      <workItem from="1690882426195" duration="610000" />
+      <workItem from="1690888937334" duration="597000" />
+      <workItem from="1694338888140" duration="25000" />
+      <workItem from="1696515234417" duration="1000" />
+      <workItem from="1698655875930" duration="13000" />
+      <workItem from="1698840348372" duration="4000" />
+      <workItem from="1699425897284" duration="10053000" />
+      <workItem from="1699755210880" duration="4972000" />
+      <workItem from="1699796290353" duration="1662000" />
+      <workItem from="1699800321086" duration="767000" />
+      <workItem from="1699837669112" duration="999000" />
+      <workItem from="1699838681758" duration="746000" />
+      <workItem from="1699839487962" duration="2635000" />
+      <workItem from="1699842586234" duration="403000" />
+      <workItem from="1699843053764" duration="3013000" />
+      <workItem from="1699846487186" duration="3958000" />
+      <workItem from="1699855584153" duration="2519000" />
+      <workItem from="1699858163108" duration="1549000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint type="java-exception">
+          <properties class="org.springframework.beans.factory.BeanCreationException" package="org.springframework.beans.factory" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+        <line-breakpoint type="java-line">
+          <url>file://$PROJECT_DIR$/product-service/src/main/java/com/example/produceService/service/ProductService.java</url>
+          <line>35</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/product-service/src/main/java/com/example/produceService/controller/ProductController.java</url>
+          <line>27</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/product-service/src/main/java/com/example/produceService/controller/ProductController.java</url>
+          <line>24</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/inventory-service/src/main/java/com/example/inventoryservice/repository/InventoryRepository.java</url>
+          <line>10</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint type="java-method">
+          <url>jar://$MAVEN_REPOSITORY$/org/springframework/spring-beans/5.3.18/spring-beans-5.3.18.jar!/org/springframework/beans/factory/support/AbstractBeanFactory.class</url>
+          <line>126</line>
+          <properties class="org.springframework.beans.factory.support.AbstractBeanFactory" method="doGetBean">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -17,5 +18,13 @@ public class DepartmentServiceImpl implements DepartmentService{
     @Override
     public List<Department> findAllDepartment() {
         return departmentRepository.findAll();
+    }
+
+    @Override
+    public Department findDepartmentById(Long id) {
+        Optional<Department> department = departmentRepository.findById(id);
+        if(department.isPresent())
+            return department.get();
+        return null;
     }
 }

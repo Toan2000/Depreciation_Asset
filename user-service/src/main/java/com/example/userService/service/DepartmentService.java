@@ -10,4 +10,5 @@ import java.util.List;
 @Service
 public interface DepartmentService {
     public List<Department> findAllDepartment();
+    Department findDepartmentById(Long id);
 }

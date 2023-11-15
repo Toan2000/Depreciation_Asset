@@ -38,7 +38,7 @@ public class ExcelUploadService {
                         case 0 -> asset.setAssetId(Math.round(cell.getNumericCellValue()));
                         case 1 -> asset.setAssetName(cell.getStringCellValue());
                         case 2 -> asset.setAssetStatus(cell.getStringCellValue());
-                        case 3 -> asset.setAssetTypeId(Math.round(cell.getNumericCellValue()));
+//                        case 3 -> asset.setAssetType(Math.round(cell.getNumericCellValue()));
                         case 4 -> asset.setPrice(cell.getNumericCellValue());
                         case 5 -> asset.setUserUsedId(Math.round(cell.getNumericCellValue()));
                         case 6 -> asset.setDeptUsedId(Math.round(cell.getNumericCellValue()));

@@ -46,6 +46,13 @@ public class AssetController {
         data.put("assets",assetService.findAssetByDeptId(id,page,size,sort));
         return new ResponseEntity<>(new Response("Danh sách tài sản",data),HttpStatus.OK);
     }
+    @GetMapping("/status/{status}")
+    public ResponseEntity getAssetByStatus(@PathVariable Long status,
+                                           @RequestParam(defaultValue = "0") int page,
+                                           @RequestParam(defaultValue = "10") int size,
+                                           @RequestParam(defaultValue = "assetId") String sort){
+        return new ResponseEntity(assetService.findAssetByAssetStatus(status,page,size,sort),HttpStatus.OK);
+    }
     @GetMapping("/user/{id}")
     public ResponseEntity<Response> getAssetByUserId(@PathVariable Long id,
                                                      @RequestParam(defaultValue = "0") int page,

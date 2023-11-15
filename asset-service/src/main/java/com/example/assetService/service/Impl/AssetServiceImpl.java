@@ -69,6 +69,14 @@ public class AssetServiceImpl implements AssetService {
     }
 
     @Override
+    public List<Asset> findAssetByAssetStatus(Long assetStatus, int page, int size, String sort) {
+        Pageable pageable = PageRequest.of(page,size, Sort.by(sort));
+        Page<Asset> assets = assetRepository.findByAssetStatus(assetStatus,pageable);
+        return assets.toList();
+    }
+
+
+    @Override
     public UserResponse getAssets1() {
         return assetServiceClient.fetchUser(Long.valueOf(1));
     }
@@ -92,6 +100,7 @@ public class AssetServiceImpl implements AssetService {
         assetResponse.setDateUsed(asset.getDateInStored());
         assetResponse.setUserIdUsed(asset.getUserUsedId());
         assetResponse.setDeptIdUsed(asset.getDeptUsedId());
+        assetResponse.setUser(assetServiceClient.fetchUser(Long.valueOf(asset.getUserUsedId())));
         return assetResponse;
 
     }

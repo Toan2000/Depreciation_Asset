@@ -22,4 +22,5 @@ public interface AssetService {
     UserResponse getAssets1();
 
     AssetResponse getAssetResponse(Asset asset);
+    List<Asset> findAssetByAssetStatus(Long assetStatus, int page, int size, String sort);
 }

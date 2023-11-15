@@ -24,4 +24,5 @@ public class AssetResponse {
     private Date dateUsed;
     private Long userIdUsed;
     private Long deptIdUsed;
+    private UserResponse user;
 }

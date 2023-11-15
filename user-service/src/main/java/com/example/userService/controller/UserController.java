@@ -2,6 +2,7 @@ package com.example.userService.controller;
 
 import com.example.userService.dto.response.Response;
 import com.example.userService.model.Department;
+import com.example.userService.model.User;
 import com.example.userService.service.DepartmentService;
 import com.example.userService.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,11 @@ public class UserController {
         data.put("user",userService.findUserById(id));
         Response response = new Response("Thông tin người dùng",data);
         return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+    @GetMapping("/v1/{id}")
+    public User getUserByIdv1(@PathVariable long id){
+        return userService.findUserById(id);
     }
 
 

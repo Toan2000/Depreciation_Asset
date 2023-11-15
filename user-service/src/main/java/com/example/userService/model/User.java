@@ -25,8 +25,11 @@ public class User {
     private Long id;
     @Column(name = "full_name")
     private String fullName;
+    @JsonIgnore
     @Column(name = "password")
     private String password;
+    @Column(name="image")
+    private String image;
     @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JoinTable(name = "\"user_role\"", joinColumns = @JoinColumn(name = "\"user_id\""), inverseJoinColumns = @JoinColumn(name = "\"role_id\""))
     private Set<Role> roles;

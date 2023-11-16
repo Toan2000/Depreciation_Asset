@@ -31,7 +31,7 @@ public class ExcelUploadService {
                 int cellIndex = 0;
                 Asset asset = new Asset();
                 asset.setDateInStored(createdAt);
-
+                asset.setDateUsed(createdAt);
                 while (cellIterator.hasNext()){
                     Cell cell = cellIterator.next();
                     switch (cellIndex){

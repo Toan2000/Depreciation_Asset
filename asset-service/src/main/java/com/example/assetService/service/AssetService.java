@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -21,5 +22,7 @@ public interface AssetService {
     Page<Asset> findAssetByUserId(Long userId, int page, int size, String sort);
 
     UserResponse getAssets1();
+    Page<Asset> findAssetByAssetType(Long assetTypeId, int page, int size, String sort);
     Page<Asset> findAssetByAssetStatus(Long assetStatus, int page, int size, String sort);
+    Page<Asset> findAssetByDate(Date fromDate, Date toDate, int page, int size, String sort);
 }

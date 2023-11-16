@@ -31,22 +31,14 @@ public class ExcelUploadService {
                 int cellIndex = 0;
                 Asset asset = new Asset();
                 asset.setDateInStored(createdAt);
-
+                asset.setAssetStatus(Long.valueOf(0));
                 while (cellIterator.hasNext()){
                     Cell cell = cellIterator.next();
                     switch (cellIndex){
-                        case 0 -> asset.setAssetId(Math.round(cell.getNumericCellValue()));
-                        case 1 -> asset.setAssetName(cell.getStringCellValue());
-                        case 2 -> asset.setAssetStatus(Math.round(cell.getNumericCellValue()));
-                        case 3 -> asset.setAssetType(Math.round(cell.getNumericCellValue()));
-                        case 4 -> asset.setPrice(cell.getNumericCellValue());
-                        case 5 -> {
-                            System.out.println(cell.getNumericCellValue());
-                            asset.setUserUsedId(Math.round(cell.getNumericCellValue()));
-                        }
-                        case 6 -> asset.setSerialNumber(cell.getStringCellValue());
-                        default -> {
-                        }
+                        case 0 -> asset.setAssetName(cell.getStringCellValue());
+                        case 1 -> asset.setAssetType(Math.round(cell.getNumericCellValue()));
+                        case 2 -> asset.setPrice(cell.getNumericCellValue());
+                        case 3 -> asset.setSerialNumber(cell.getStringCellValue());
                     }
                     cellIndex++;
                 }

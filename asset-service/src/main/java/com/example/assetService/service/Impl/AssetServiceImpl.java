@@ -1,10 +1,8 @@
 package com.example.assetService.service.Impl;
 
 import com.example.assetService.client.AssetServiceClient;
-import com.example.assetService.dto.AssetResponse;
-import com.example.assetService.dto.UserResponse;
+import com.example.assetService.dto.response.UserResponse;
 import com.example.assetService.model.Asset;
-import com.example.assetService.model.AssetType;
 import com.example.assetService.repository.AssetRepository;
 import com.example.assetService.repository.AssetTypeRepository;
 import com.example.assetService.service.AssetService;
@@ -19,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -73,9 +71,28 @@ public class AssetServiceImpl implements AssetService {
        return assetRepository.findByAssetStatus(assetStatus,pageable);
     }
 
+    @Override
+    public Page<Asset> findAssetByDate(Date fromDate, Date toDate, int page, int size, String sort) {
+        Pageable pageable = PageRequest.of(page,size);
+        return assetRepository.findByStoredDate1(fromDate,toDate,pageable);
+    }
+
+    @Override
+    public boolean createAsset(Asset asset) {
+        if(assetRepository.save(asset)!=null)
+            return true;
+        return false;
+    }
+
 
     @Override
     public UserResponse getAssets1() {
         return assetServiceClient.fetchUser(Long.valueOf(1));
+    }
+
+    @Override
+    public Page<Asset> findAssetByAssetType(Long assetTypeId, int page, int size, String sort) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
+        return assetRepository.findByAssetType(assetTypeId,pageable);
     }
 }

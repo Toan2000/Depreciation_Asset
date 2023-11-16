@@ -1,7 +1,8 @@
 package com.example.assetService.mapping;
 
 import com.example.assetService.client.AssetServiceClient;
-import com.example.assetService.dto.AssetResponse;
+import com.example.assetService.dto.request.AssetRequest;
+import com.example.assetService.dto.response.AssetResponse;
 import com.example.assetService.model.Asset;
 import com.example.assetService.model.AssetType;
 import com.example.assetService.repository.AssetTypeRepository;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -35,11 +37,23 @@ public class AssetMapping {
         }
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         assetResponse.setDateInStored(dateFormat.format(asset.getDateInStored()));
-        assetResponse.setDateUsed(dateFormat.format(asset.getDateUsed()));
+        if(asset.getDateUsed() != null)
+            assetResponse.setDateUsed(dateFormat.format(asset.getDateUsed()));
         assetResponse.setUserIdUsed(asset.getUserUsedId());
         assetResponse.setDeptIdUsed(asset.getDeptUsedId());
         assetResponse.setUser(assetServiceClient.fetchUser(Long.valueOf(asset.getUserUsedId())));
         return assetResponse;
+    }
 
+    public Asset getAsset(AssetRequest assetRequest){
+        Asset asset = new Asset();
+        Date createdAt = new Date();
+        asset.setDateInStored(createdAt);
+        asset.setAssetName(assetRequest.getAssetName());
+        asset.setAssetType(assetRequest.getAssetTypeId());
+        asset.setAssetStatus(assetRequest.getStatus());
+        asset.setPrice(assetRequest.getPrice());
+        asset.setSerialNumber(assetRequest.getSerial());
+        return asset;
     }
 }

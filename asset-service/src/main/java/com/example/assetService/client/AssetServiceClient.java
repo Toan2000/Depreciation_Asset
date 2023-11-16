@@ -1,6 +1,6 @@
 package com.example.assetService.client;
 
-import com.example.assetService.dto.UserResponse;
+import com.example.assetService.dto.response.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;

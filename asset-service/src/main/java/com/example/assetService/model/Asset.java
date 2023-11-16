@@ -4,10 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
@@ -19,6 +16,7 @@ public class Asset {
 
     @Id
     @Column(name = "ASSET_ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long assetId;
     @Column(name = "ASSET_NAME")
     private String assetName;

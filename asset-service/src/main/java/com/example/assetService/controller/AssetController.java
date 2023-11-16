@@ -1,7 +1,8 @@
 package com.example.assetService.controller;
 
-import com.example.assetService.dto.AssetResponse;
-import com.example.assetService.dto.Response;
+import com.example.assetService.dto.request.AssetRequest;
+import com.example.assetService.dto.response.AssetResponse;
+import com.example.assetService.dto.response.Response;
 import com.example.assetService.mapping.AssetMapping;
 import com.example.assetService.model.Asset;
 import com.example.assetService.service.AssetService;
@@ -12,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -82,10 +85,43 @@ public class AssetController {
         data.put("totalPage",assets.getTotalPages());
         return new ResponseEntity<>(new Response("Danh sách tài sản",data),HttpStatus.OK);
     }
+    @GetMapping("/assetType/{id}")
+    public ResponseEntity<Response> getAssetByAssetType(@PathVariable Long id,
+                                                        @RequestParam(defaultValue = "0") int page,
+                                                        @RequestParam(defaultValue = "10") int size,
+                                                        @RequestParam(defaultValue = "assetId") String sort){
+        Map<String,Object> data = new HashMap<>();
+        Page<Asset> assets = assetService.findAssetByAssetType(id,page,size,sort);
+        List<AssetResponse> assetResponses = new ArrayList<>();
+        for(Asset asset: assets) assetResponses.add(assetMapping.getAssetResponse(asset));
+        data.put("assets",assetResponses);
+        data.put("totalPage",assets.getTotalPages());
+        return new ResponseEntity<>(new Response("Danh sách tài sản",data),HttpStatus.OK);
+    }
+    @GetMapping("/date")
+    public ResponseEntity<Response> getAssetByDate(@RequestParam(defaultValue = "1900-01-01") String fromDate,
+                                                   @RequestParam(defaultValue = "2999-12-31") String toDate,
+                                                   @RequestParam(defaultValue = "0") int page,
+                                                   @RequestParam(defaultValue = "10") int size,
+                                                   @RequestParam(defaultValue = "assetId") String sort) throws ParseException {
+        Map<String,Object> data = new HashMap<>();
+        Page<Asset> assets = assetService.findAssetByDate(new SimpleDateFormat("yyyy-MM-dd").parse(fromDate),new SimpleDateFormat("yyyy-MM-dd").parse(toDate),page,size,sort);
+        List<AssetResponse> assetResponses = new ArrayList<>();
+        for(Asset asset: assets) assetResponses.add(assetMapping.getAssetResponse(asset));
+        data.put("assets",assetResponses);
+        data.put("totalPage",assets.getTotalPages());
+        return new ResponseEntity<>(new Response("Danh sách tài sản",data),HttpStatus.OK);
+    }
     @PostMapping("/upload-assets-data")
     public ResponseEntity<?> uploadAssetsData(@RequestParam("file") MultipartFile file){
         assetService.saveAssetsToDatabase(file);
         return ResponseEntity
                 .ok(Map.of("Message" , " Assets data uploaded and saved to database successfully"));
+    }
+    @PostMapping("/create")
+    public ResponseEntity<Response> createAsset(@RequestBody AssetRequest assetRequest){
+        if(assetService.createAsset(assetMapping.getAsset(assetRequest)))
+            return new ResponseEntity(new Response("Tạo tài sản thành công",null),HttpStatus.CREATED);
+        return new ResponseEntity(new Response("Tạo tài sản thất bại",null),HttpStatus.NOT_ACCEPTABLE);
     }
 }

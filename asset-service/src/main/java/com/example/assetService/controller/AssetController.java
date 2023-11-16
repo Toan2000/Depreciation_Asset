@@ -1,7 +1,8 @@
 package com.example.assetService.controller;
 
-import com.example.assetService.dto.AssetResponse;
-import com.example.assetService.dto.Response;
+import com.example.assetService.dto.request.AssetRequest;
+import com.example.assetService.dto.response.AssetResponse;
+import com.example.assetService.dto.response.Response;
 import com.example.assetService.mapping.AssetMapping;
 import com.example.assetService.model.Asset;
 import com.example.assetService.service.AssetService;
@@ -116,5 +117,11 @@ public class AssetController {
         assetService.saveAssetsToDatabase(file);
         return ResponseEntity
                 .ok(Map.of("Message" , " Assets data uploaded and saved to database successfully"));
+    }
+    @PostMapping("/create")
+    public ResponseEntity<Response> createAsset(@RequestBody AssetRequest assetRequest){
+        if(assetService.createAsset(assetMapping.getAsset(assetRequest)))
+            return new ResponseEntity(new Response("Tạo tài sản thành công",null),HttpStatus.CREATED);
+        return new ResponseEntity(new Response("Tạo tài sản thất bại",null),HttpStatus.NOT_ACCEPTABLE);
     }
 }

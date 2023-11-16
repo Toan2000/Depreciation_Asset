@@ -1,11 +1,9 @@
-package com.example.assetService.dto;
+package com.example.assetService.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Date;
 
 @Data
 @Builder

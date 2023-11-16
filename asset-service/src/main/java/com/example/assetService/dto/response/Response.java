@@ -1,17 +1,17 @@
-package com.example.assetService.dto;
+package com.example.assetService.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserResponse {
-    private long id;
-    private String fullName;
-    private String image;
-    private Object dept;
+public class Response {
+    private String message;
+    private Map<String,Object> data;
 }

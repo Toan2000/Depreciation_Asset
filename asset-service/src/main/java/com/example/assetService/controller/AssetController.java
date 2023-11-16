@@ -20,7 +20,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/asset")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3001")
 
 public class AssetController {
     private final AssetService assetService;

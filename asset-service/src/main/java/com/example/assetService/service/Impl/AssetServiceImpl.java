@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,9 +42,9 @@ public class AssetServiceImpl implements AssetService {
         }
     }
 
-    public List<Asset> getAssets(int page, int size, String sort){
+    public Page<Asset> getAssets(int page, int size, String sort){
         Pageable pageable = PageRequest.of(page,size,Sort.by(sort));
-        return assetRepository.findAll(pageable).toList();
+        return assetRepository.findAll(pageable);
     }
 
     @Override
@@ -55,53 +56,26 @@ public class AssetServiceImpl implements AssetService {
     }
 
     @Override
-    public List<Asset> findAssetByDeptId(Long deptId, int page,int size,String sort){
+    public Page<Asset> findAssetByDeptId(Long deptId, int page,int size,String sort){
         Pageable pageable = PageRequest.of(page,size, Sort.by(sort));
-        Page<Asset> assetPage = assetRepository.findByDeptUsedId(deptId,pageable);
-        return assetPage.toList();
+        return assetRepository.findByDeptUsedId(deptId,pageable);
     }
 
     @Override
-    public List<Asset> findAssetByUserId(Long userId, int page, int size, String sort) {
+    public Page<Asset> findAssetByUserId(Long userId, int page, int size, String sort) {
         Pageable pageable = PageRequest.of(page,size, Sort.by(sort));
-        Page<Asset> assets = assetRepository.findByUserUsedId(userId,pageable);
-        return assets.toList();
+        return assetRepository.findByUserUsedId(userId,pageable);
     }
 
     @Override
-    public List<Asset> findAssetByAssetStatus(Long assetStatus, int page, int size, String sort) {
+    public Page<Asset> findAssetByAssetStatus(Long assetStatus, int page, int size, String sort) {
         Pageable pageable = PageRequest.of(page,size, Sort.by(sort));
-        Page<Asset> assets = assetRepository.findByAssetStatus(assetStatus,pageable);
-        return assets.toList();
+       return assetRepository.findByAssetStatus(assetStatus,pageable);
     }
 
 
     @Override
     public UserResponse getAssets1() {
         return assetServiceClient.fetchUser(Long.valueOf(1));
-    }
-
-    @Override
-    public AssetResponse getAssetResponse(Asset asset) {
-        AssetResponse assetResponse = new AssetResponse();
-        assetResponse.setAssetId(asset.getAssetId());
-        assetResponse.setAssetName(asset.getAssetName());
-        assetResponse.setAssetTypeId(asset.getAssetType());
-        Optional<AssetType> assetType = assetTypeRepository.findById(asset.getAssetType());
-        if(assetType.isPresent())
-            assetResponse.setAssetTypeName(assetType.get().getAssetName());
-        assetResponse.setPrice(asset.getPrice());
-        assetResponse.setStatus(asset.getAssetStatus());
-        switch (Math.toIntExact(asset.getAssetStatus())){
-            case 0: assetResponse.setStatusName("Chưa sử dụng");break;
-            case 1: assetResponse.setStatusName("Đang sử dụng");break;
-        }
-        assetResponse.setDateInStored(asset.getDateInStored());
-        assetResponse.setDateUsed(asset.getDateInStored());
-        assetResponse.setUserIdUsed(asset.getUserUsedId());
-        assetResponse.setDeptIdUsed(asset.getDeptUsedId());
-        assetResponse.setUser(assetServiceClient.fetchUser(Long.valueOf(asset.getUserUsedId())));
-        return assetResponse;
-
     }
 }

@@ -4,10 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "asset_type")
@@ -20,6 +17,7 @@ public class AssetType {
     private Long id;
     @Column(name = "name")
     private String assetName;
-    @Column(name = "asset_group_id")
-    private int assetGroupId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "\"asset_group_id\"")
+    private AssetGroup assetGroup;
 }

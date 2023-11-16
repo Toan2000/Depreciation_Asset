@@ -16,13 +16,14 @@ public class AssetResponse {
     private String assetName;
     private long assetTypeId;
     private String assetTypeName;
+    private int assetGroupId;
     private String assetGroup;
-    private Date dateInStored;
     private Long status;
     private String statusName;
     private Double price;
-    private Date dateUsed;
+    private String dateUsed;
     private Long userIdUsed;
     private Long deptIdUsed;
     private UserResponse user;
+    private String dateInStored;
 }

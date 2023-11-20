@@ -22,7 +22,6 @@ public class ExcelUploadService {
             XSSFSheet sheet = workbook.getSheet("assets");
             int rowIndex =0;
             for (Row row : sheet){
-                Date createdAt = new Date();
                 if (rowIndex ==0){
                     rowIndex++;
                     continue;
@@ -30,7 +29,7 @@ public class ExcelUploadService {
                 Iterator<Cell> cellIterator = row.iterator();
                 int cellIndex = 0;
                 Asset asset = new Asset();
-                asset.setDateInStored(createdAt);
+                asset.setDateInStored(new Date());
                 asset.setAssetStatus(Long.valueOf(0));
                 while (cellIterator.hasNext()){
                     Cell cell = cellIterator.next();

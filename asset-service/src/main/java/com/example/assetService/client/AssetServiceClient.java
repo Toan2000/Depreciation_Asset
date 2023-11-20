@@ -1,5 +1,6 @@
 package com.example.assetService.client;
 
+import com.example.assetService.dto.request.DepreciationRequest;
 import com.example.assetService.dto.response.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,5 +14,9 @@ public class AssetServiceClient {
 
     public UserResponse fetchUser(Long userId) {
         return template.getForObject("http://USER-SERVICE/api/user/v1/" + userId, UserResponse.class);
+    }
+
+    public void addDepreciation(DepreciationRequest depreciationRequest) {
+        template.postForEntity("http://DEPRECIATION-SERVICE/api/depreciation/create", depreciationRequest,String.class);
     }
 }

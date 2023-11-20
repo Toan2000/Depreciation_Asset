@@ -17,9 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.text.Normalizer;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Service
 @Transactional
@@ -75,6 +77,43 @@ public class AssetServiceImpl implements AssetService {
     public Page<Asset> findAssetByDate(Date fromDate, Date toDate, int page, int size, String sort) {
         Pageable pageable = PageRequest.of(page,size);
         return assetRepository.findByStoredDate1(fromDate,toDate,pageable);
+    }
+
+    @Override
+    public Page<Asset> findAssetByName(String name, int page, int size, String sort) {
+        Pageable pageable = PageRequest.of(page,size);
+        name = covertToString(name.toLowerCase());
+        String[] parts = name.split(" ");
+        String keyword = "%(";
+        for(String key : parts){
+            keyword+=key+"|";
+        }
+        keyword+=")%";
+        return assetRepository.findByKeyword(keyword,pageable);
+    }
+
+    @Override
+    public Page<Asset> filterAssets(String name, Long deptId, Long userId, Long status, Date fromDate, Date toDate, int page, int size, String sort) {
+        Pageable pageable = PageRequest.of(page,size,Sort.by(sort));
+        String keyword = "%(";
+        name = covertToString(name.toLowerCase());
+        String[] parts = name.split(" ");
+        for(String key : parts){
+            keyword+=key+"|";
+        }
+        keyword+=")%";
+        return assetRepository.filterAssets(keyword,deptId,userId,fromDate,toDate,status,pageable);
+    }
+
+    public static String covertToString(String value) {
+        try {
+            String temp = Normalizer.normalize(value, Normalizer.Form.NFD);
+            Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+            return pattern.matcher(temp).replaceAll("");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 
     @Override

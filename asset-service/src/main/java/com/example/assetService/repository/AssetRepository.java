@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Date;
 
@@ -22,4 +23,20 @@ public interface AssetRepository extends JpaRepository<Asset,Long> {
             countQuery = "SELECT * FROM public.assets WHERE date_in_stored >= ?1 AND date_in_stored <= ?2 ORDER BY asset_id ASC\n",
             nativeQuery = true)
     Page<Asset> findByStoredDate1(Date fromDate, Date toDate, Pageable pageable);
+    // ?1 = '%(in|may)%'
+    @Query(value = "select * from assets where converttvkdau(lower(assets.asset_name)) SIMILAR TO ?",
+            countQuery = "select * from assets where converttvkdau(lower(assets.asset_name)) SIMILAR TO ?",
+            nativeQuery = true)
+    Page<Asset> findByKeyword(String keyword,Pageable pageable);
+
+    @Query(value = "SELECT * \n" +
+            "FROM public.assets a \n" +
+            "WHERE (?1 = 'NAMENULL' OR converttvkdau(lower(a.asset_name)) SIMILAR TO ?1)\n" +
+            "AND (?2 = -1 OR a.dept_used_id = ?2) \n" +
+            "AND (?3 = -1 OR a.user_used_id = ?3)\n" +
+            "AND (a.date_in_stored >=?4 AND a.date_in_stored <= ?5)\n"+
+            "AND (?6 = -1 OR a.asset_status = ?6)",
+            nativeQuery = true)
+    Page<Asset> filterAssets(String keyword,Long deptId, Long userId, Date fromDate, Date toDate, Long status,Pageable pageable);
+
 }

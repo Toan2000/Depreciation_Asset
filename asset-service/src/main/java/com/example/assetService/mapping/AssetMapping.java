@@ -2,7 +2,9 @@ package com.example.assetService.mapping;
 
 import com.example.assetService.client.AssetServiceClient;
 import com.example.assetService.dto.request.AssetRequest;
+import com.example.assetService.dto.request.DepreciationRequest;
 import com.example.assetService.dto.response.AssetResponse;
+import com.example.assetService.dto.response.UserResponse;
 import com.example.assetService.model.Asset;
 import com.example.assetService.model.AssetType;
 import com.example.assetService.repository.AssetTypeRepository;
@@ -41,19 +43,30 @@ public class AssetMapping {
             assetResponse.setDateUsed(dateFormat.format(asset.getDateUsed()));
         assetResponse.setUserIdUsed(asset.getUserUsedId());
         assetResponse.setDeptIdUsed(asset.getDeptUsedId());
-        assetResponse.setUser(assetServiceClient.fetchUser(Long.valueOf(asset.getUserUsedId())));
+        if(asset.getUserUsedId()!=null){
+            assetResponse.setUser(assetServiceClient.fetchUser(Long.valueOf(asset.getUserUsedId())));
+        }
         return assetResponse;
     }
 
     public Asset getAsset(AssetRequest assetRequest){
         Asset asset = new Asset();
-        Date createdAt = new Date();
-        asset.setDateInStored(createdAt);
+        asset.setDateInStored(new Date());
         asset.setAssetName(assetRequest.getAssetName());
         asset.setAssetType(assetRequest.getAssetTypeId());
         asset.setAssetStatus(assetRequest.getStatus());
         asset.setPrice(assetRequest.getPrice());
         asset.setSerialNumber(assetRequest.getSerial());
+        return asset;
+    }
+    public Asset updateAsset(Asset asset, Long userId){
+        UserResponse userResponse = assetServiceClient.fetchUser(Long.valueOf(userId));
+        if(userResponse == null)
+            return null;
+        asset.setAssetStatus(Long.valueOf(1));
+        asset.setDateUsed(new Date());
+        asset.setUserUsedId(userId);
+        asset.setDeptUsedId(Long.valueOf(userResponse.getDept().getId()));
         return asset;
     }
 }

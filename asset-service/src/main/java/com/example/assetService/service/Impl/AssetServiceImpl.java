@@ -95,7 +95,14 @@ public class AssetServiceImpl implements AssetService {
     @Override
     public Page<Asset> filterAssets(String name, Long deptId, Long userId, Long status, Date fromDate, Date toDate, int page, int size, String sort) {
         Pageable pageable = PageRequest.of(page,size,Sort.by(sort));
-        return assetRepository.filterAssets(deptId,userId,fromDate,toDate,pageable);
+        String keyword = "%(";
+        name = covertToString(name.toLowerCase());
+        String[] parts = name.split(" ");
+        for(String key : parts){
+            keyword+=key+"|";
+        }
+        keyword+=")%";
+        return assetRepository.filterAssets(keyword,deptId,userId,fromDate,toDate,status,pageable);
     }
 
     public static String covertToString(String value) {

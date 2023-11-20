@@ -139,11 +139,11 @@ public class AssetController {
         return new ResponseEntity<>(new Response("Danh sách tài sản",data),HttpStatus.OK);
     }
     @GetMapping("/filter")
-    public ResponseEntity<Response> filterAssets(@RequestParam(required = false) String name,
-                                                 @RequestParam(required = false) Long dept,
-                                                 @RequestParam(required = false) Long user,
-                                                 @RequestParam(required = false) Long status,
-                                                 @RequestParam(defaultValue = "1900-01-01") String fromDate,
+    public ResponseEntity<Response> filterAssets(@RequestParam(defaultValue = "NAMENULL") String name,
+                                                 @RequestParam(defaultValue = "-1") Long dept,
+                                                 @RequestParam(defaultValue = "-1") Long user,
+                                                 @RequestParam(defaultValue = "-1") Long status,
+                                                 @RequestParam(defaultValue = "1000-01-01") String fromDate,
                                                  @RequestParam(defaultValue = "2999-12-31") String toDate,
                                                  @RequestParam(defaultValue = "0") int page,
                                                  @RequestParam(defaultValue = "10") int size,

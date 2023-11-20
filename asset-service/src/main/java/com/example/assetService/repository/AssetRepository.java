@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Date;
 
@@ -30,14 +31,12 @@ public interface AssetRepository extends JpaRepository<Asset,Long> {
 
     @Query(value = "SELECT * \n" +
             "FROM public.assets a \n" +
-            "WHERE (?1 IS NULL OR a.dept_used_id = ?1) \n" +
-            "AND (?2 IS NULL OR a.user_used_id = ?2)\n" +
-            "AND (?3 IS NULL OR ?4 IS NULL OR p.date_in_stored >=?3 AND date_in_stored <= ?4)\n",
-            countQuery = "SELECT * \n" +
-                    "FROM public.assets a \n" +
-                    "WHERE (?1 IS NULL OR a.dept_used_id = ?1) \n" +
-                    "AND (?2 IS NULL OR a.user_used_id = ?2)\n" +
-                    "AND (?3 IS NULL OR ?4 IS NULL OR p.date_in_stored >=?3 AND date_in_stored <= ?4)\n",
+            "WHERE (?1 = 'NAMENULL' OR converttvkdau(lower(a.asset_name)) SIMILAR TO ?1)\n" +
+            "AND (?2 = -1 OR a.dept_used_id = ?2) \n" +
+            "AND (?3 = -1 OR a.user_used_id = ?3)\n" +
+            "AND (a.date_in_stored >=?4 AND a.date_in_stored <= ?5)\n"+
+            "AND (?6 = -1 OR a.asset_status = ?6)",
             nativeQuery = true)
-    Page<Asset> filterAssets(Long deptId, Long userId, Date fromDate, Date toDate,Pageable pageable);
+    Page<Asset> filterAssets(String keyword,Long deptId, Long userId, Date fromDate, Date toDate, Long status,Pageable pageable);
+
 }

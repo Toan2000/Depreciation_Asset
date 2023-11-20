@@ -1,4 +1,4 @@
-package com.example.assetService.dto.response;
+package com.example.depreciationService.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

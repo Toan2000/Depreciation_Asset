@@ -23,5 +23,7 @@ public interface AssetService {
     Page<Asset> findAssetByAssetType(Long assetTypeId, int page, int size, String sort);
     Page<Asset> findAssetByAssetStatus(Long assetStatus, int page, int size, String sort);
     Page<Asset> findAssetByDate(Date fromDate, Date toDate, int page, int size, String sort);
+    Page<Asset> findAssetByName(String name,int page, int size, String sort);
+    Page<Asset> filterAssets(String name, Long deptId, Long userId, Long status, Date fromDate, Date toDate, int page, int size, String sort);
     boolean createAsset(Asset asset);
 }

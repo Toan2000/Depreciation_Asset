@@ -17,6 +17,8 @@ public class AssetType {
     private Long id;
     @Column(name = "name")
     private String assetName;
+    @Column(name = "amountOfYear")
+    private int amountOfYear;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "\"asset_group_id\"")
     private AssetGroup assetGroup;

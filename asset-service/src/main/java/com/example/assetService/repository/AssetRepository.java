@@ -34,9 +34,10 @@ public interface AssetRepository extends JpaRepository<Asset,Long> {
             "WHERE (?1 = 'NAMENULL' OR converttvkdau(lower(a.asset_name)) SIMILAR TO ?1)\n" +
             "AND (?2 = -1 OR a.dept_used_id = ?2) \n" +
             "AND (?3 = -1 OR a.user_used_id = ?3)\n" +
-            "AND (a.date_in_stored >=?4 AND a.date_in_stored <= ?5)\n"+
-            "AND (?6 = -1 OR a.asset_status = ?6)",
+            "AND (?4 = -1 OR a.asset_type = ?4)\n" +
+            "AND (a.date_in_stored >=?5 AND a.date_in_stored <= ?6)\n"+
+            "AND (?7 = -1 OR a.asset_status = ?7)",
             nativeQuery = true)
-    Page<Asset> filterAssets(String keyword,Long deptId, Long userId, Date fromDate, Date toDate, Long status,Pageable pageable);
+    Page<Asset> filterAssets(String keyword,Long deptId, Long userId,Long assetType, Date fromDate, Date toDate, Long status,Pageable pageable);
 
 }

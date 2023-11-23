@@ -32,7 +32,7 @@ public class Depreciation {
     @Column(name = "amount_month")
     private int amountMonth;
     @Column(name = "value_depreciation")
-    private Long valueDepreciation;
+    private Double valueDepreciation;
     @Column(name = "create_at")
     private Date createAt;
     @Column(name = "active")

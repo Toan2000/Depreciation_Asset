@@ -2,6 +2,7 @@ package com.example.depreciationService.service;
 
 import com.example.depreciationService.model.Depreciation;
 import org.springframework.data.domain.Page;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -18,4 +19,6 @@ public interface DepreciationService {
     Page<Depreciation> getAllDepreciation(int page, int size);
 
     Depreciation findDepreciationToUpdate(Long assetId);
+
+     void calculateDepreciation();
 }

@@ -143,13 +143,14 @@ public class AssetController {
                                                  @RequestParam(defaultValue = "-1") Long dept,
                                                  @RequestParam(defaultValue = "-1") Long user,
                                                  @RequestParam(defaultValue = "-1") Long status,
+                                                 @RequestParam(defaultValue = "-1") Long assetType,
                                                  @RequestParam(defaultValue = "1000-01-01") String fromDate,
                                                  @RequestParam(defaultValue = "2999-12-31") String toDate,
                                                  @RequestParam(defaultValue = "0") int page,
                                                  @RequestParam(defaultValue = "10") int size,
                                                  @RequestParam(defaultValue = "asset_id") String sort) throws ParseException {
         Map<String,Object> data = new HashMap<>();
-        Page<Asset> assets = assetService.filterAssets(name,dept,user,status,
+        Page<Asset> assets = assetService.filterAssets(name,dept,user,status,assetType,
                     new SimpleDateFormat("yyyy-MM-dd").parse(fromDate),
                     new SimpleDateFormat("yyyy-MM-dd").parse(toDate),
                     page,size,sort);

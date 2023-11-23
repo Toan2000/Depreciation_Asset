@@ -28,6 +28,7 @@ public class AssetMapping {
         Optional<AssetType> assetType = assetTypeRepository.findById(asset.getAssetType());
         if(assetType.isPresent()){
             assetResponse.setAssetTypeName(assetType.get().getAssetName());
+            assetResponse.setAmountOfYear(assetType.get().getAmountOfYear());
             assetResponse.setAssetGroupId(assetType.get().getAssetGroup().getId());
             assetResponse.setAssetGroup(assetType.get().getAssetGroup().getName());
         }

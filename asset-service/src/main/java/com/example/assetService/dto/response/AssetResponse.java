@@ -14,6 +14,7 @@ public class AssetResponse {
     private String assetName;
     private long assetTypeId;
     private String assetTypeName;
+    private int amountOfYear;
     private int assetGroupId;
     private String assetGroup;
     private Long status;

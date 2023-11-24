@@ -53,10 +53,12 @@ public class DepreciationMapping {
     }
 
     public Depreciation updateDepreciation(Depreciation depreciation){
-        depreciation.setToDate(new Date());
-        //depreciation.setAmountMonth(1);
-        //depreciation.setValueDepreciation(Long.valueOf(1));
-        //depreciation.setStatus(2);
+        Date endDate = new Date();
+        depreciation.setToDate(endDate);
+        depreciation.setAmountMonth(0);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        depreciation.setValueDepreciation(depreciationServiceClient.getDepreciationValue(depreciation.getAssetId(),dateFormat.format(depreciation.getFromDate()), dateFormat.format(new Date())));
+        depreciation.setStatus(2);
         return depreciation;
     }
 

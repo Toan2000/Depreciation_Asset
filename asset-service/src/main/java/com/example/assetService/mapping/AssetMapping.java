@@ -8,6 +8,7 @@ import com.example.assetService.dto.response.UserResponse;
 import com.example.assetService.model.Asset;
 import com.example.assetService.model.AssetType;
 import com.example.assetService.repository.AssetTypeRepository;
+import com.example.assetService.service.AssetTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -19,19 +20,17 @@ import java.util.Optional;
 @Component
 public class AssetMapping {
     private final AssetServiceClient assetServiceClient;
-    private final AssetTypeRepository assetTypeRepository;
+    private final AssetTypeService assetTypeService;
     public AssetResponse getAssetResponse(Asset asset) {
         AssetResponse assetResponse = new AssetResponse();
         assetResponse.setAssetId(asset.getAssetId());
         assetResponse.setAssetName(asset.getAssetName());
         assetResponse.setAssetTypeId(asset.getAssetType());
-        Optional<AssetType> assetType = assetTypeRepository.findById(asset.getAssetType());
-        if(assetType.isPresent()){
-            assetResponse.setAssetTypeName(assetType.get().getAssetName());
-            assetResponse.setAmountOfYear(assetType.get().getAmountOfYear());
-            assetResponse.setAssetGroupId(assetType.get().getAssetGroup().getId());
-            assetResponse.setAssetGroup(assetType.get().getAssetGroup().getName());
-        }
+        AssetType assetType = assetTypeService.findAssetTypeById(asset.getAssetType());
+        assetResponse.setAssetTypeName(assetType.getAssetName());
+        assetResponse.setAmountOfYear(assetType.getAmountOfYear());
+        assetResponse.setAssetGroupId(assetType.getAssetGroup().getId());
+        assetResponse.setAssetGroup(assetType.getAssetGroup().getName());
         assetResponse.setPrice(asset.getPrice());
         assetResponse.setStatus(asset.getAssetStatus());
         switch (Math.toIntExact(asset.getAssetStatus())){
@@ -53,6 +52,8 @@ public class AssetMapping {
     public Asset getAsset(AssetRequest assetRequest){
         Asset asset = new Asset();
         asset.setDateInStored(new Date());
+        AssetType assetType = assetTypeService.findAssetTypeById(asset.getAssetType());
+        asset.setTime(Long.valueOf(assetType.getAmountOfYear()));
         asset.setAssetName(assetRequest.getAssetName());
         asset.setAssetType(assetRequest.getAssetTypeId());
         asset.setAssetStatus(assetRequest.getStatus());

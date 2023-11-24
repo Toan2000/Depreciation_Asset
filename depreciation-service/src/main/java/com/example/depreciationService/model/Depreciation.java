@@ -1,5 +1,6 @@
 package com.example.depreciationService.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "depreciation")
@@ -39,4 +41,7 @@ public class Depreciation {
     private boolean active;
     @Column(name = "status")
     private int status;
+    @JsonIgnore
+    @OneToMany(mappedBy = "depreciation",cascade = CascadeType.ALL)
+    private List<DepreciationHistory> histories;
 }

@@ -1,5 +1,6 @@
 package com.example.depreciationService.service.Impl;
 
+import com.example.depreciationService.client.DepreciationServiceClient;
 import com.example.depreciationService.model.Depreciation;
 import com.example.depreciationService.repository.DepreciationRepository;
 import com.example.depreciationService.service.DepreciationService;
@@ -11,6 +12,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +22,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class DepreciationServiceImpl implements DepreciationService {
     private final DepreciationRepository depreciationRepository;
+    private final DepreciationServiceClient depreciationServiceClient;
     @Override
     public List<Depreciation> findByAssetId(Long assetId) {
         return depreciationRepository.findByAssetId(assetId);
@@ -44,9 +48,21 @@ public class DepreciationServiceImpl implements DepreciationService {
     }
 
     @Override
-    @Scheduled(fixedRate = 60000)
-    public void calculateDepreciation() {
-        // Thực hiện logic tính khấu hao ở đây
-        System.out.println("Tính khấu hao sau 1 giờ...");
+    public List<Depreciation> getAllDepreciationNoToDate() {
+        return depreciationRepository.getAllDepreciationNoToDate();
     }
+
+    @Override
+    public List<Depreciation> getDepreciationByFromDateAndToDate(Date fromDate, Date toDate) {
+        return depreciationRepository.getDepreciationByFromDateAndToDate(fromDate,toDate);
+    }
+
+    @Override
+    public Depreciation findById(Long id) {
+        Optional<Depreciation> depreciation = depreciationRepository.findById(id);
+        if(depreciation.isPresent())
+            return depreciation.get();
+        return null;
+    }
+
 }

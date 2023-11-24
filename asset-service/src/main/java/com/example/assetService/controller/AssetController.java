@@ -7,7 +7,9 @@ import com.example.assetService.dto.response.AssetResponse;
 import com.example.assetService.dto.response.Response;
 import com.example.assetService.mapping.AssetMapping;
 import com.example.assetService.model.Asset;
+import com.example.assetService.model.AssetType;
 import com.example.assetService.service.AssetService;
+import com.example.assetService.service.AssetTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -17,7 +19,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/api/asset")
@@ -27,6 +32,7 @@ import java.util.*;
 public class AssetController {
     private final AssetService assetService;
     private final AssetMapping assetMapping;
+    private final AssetTypeService assetTypeService;
     private final AssetServiceClient assetServiceClient;
     @GetMapping("")
     public ResponseEntity<Response> getAllAsset(@RequestParam(defaultValue = "0") int page,
@@ -181,5 +187,31 @@ public class AssetController {
         assetService.createAsset(asset);
 
         return new ResponseEntity<>(new Response("Cập nhật thông tin thành công",null),HttpStatus.OK);
+    }
+
+    @GetMapping("/depreciation/{id}")
+    public ResponseEntity getDepreciationPerMonth(@PathVariable Long id,
+                                                  @RequestParam String fromDate,
+                                                  @RequestParam String toDate) throws ParseException {
+        Asset asset = assetService.findAssetById(id);
+        LocalDate fDate = LocalDate.parse(fromDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        LocalDate tDate = LocalDate.parse(toDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        Double valuePerMonth = asset.getPrice()/asset.getTime();
+        Double value = 0.0;
+        if(fDate.getMonthValue()==tDate.getMonthValue()&&tDate.getYear()==fDate.getYear())
+            value += valuePerMonth*((tDate.getDayOfMonth()-fDate.getDayOfMonth()+1)/Double.valueOf(fDate.lengthOfMonth()));
+        else {
+            value += valuePerMonth*((fDate.lengthOfMonth()-fDate.getDayOfMonth()+1)/Double.valueOf(fDate.lengthOfMonth()));
+            for(int i = fDate.getYear(); i<= tDate.getYear();i++){
+                for(int j =fDate.getMonthValue()+1;j<=12;j++){
+                    if(fDate.getYear() == tDate.getYear()&& j == tDate.getMonthValue())
+                        break;
+                    else
+                        value += valuePerMonth;
+                }
+            }
+            value += valuePerMonth*(tDate.getDayOfMonth()/Double.valueOf(tDate.lengthOfMonth()));
+        }
+        return new ResponseEntity(value,HttpStatus.OK);
     }
 }

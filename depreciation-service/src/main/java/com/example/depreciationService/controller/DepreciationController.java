@@ -1,9 +1,12 @@
 package com.example.depreciationService.controller;
 
+import com.example.depreciationService.client.DepreciationServiceClient;
 import com.example.depreciationService.dto.request.DepreciationRequest;
 import com.example.depreciationService.dto.response.DepreciationResponse;
+import com.example.depreciationService.mapping.DepreciationHistoryMapping;
 import com.example.depreciationService.mapping.DepreciationMapping;
 import com.example.depreciationService.model.Depreciation;
+import com.example.depreciationService.service.DepreciationHistoryService;
 import com.example.depreciationService.service.DepreciationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -11,9 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/depreciation")
@@ -21,6 +24,9 @@ import java.util.List;
 public class DepreciationController {
     private final DepreciationMapping depreciationMapping;
     private final DepreciationService depreciationService;
+    private final DepreciationHistoryService depreciationHistoryService;
+    private final DepreciationServiceClient depreciationServiceClient;
+    private final DepreciationHistoryMapping depreciationHistoryMapping;
     @PostMapping("/create")
     public ResponseEntity saveDepreciation(@RequestBody DepreciationRequest depreciationRequest){
         for(Depreciation depreciation : depreciationService.findByAssetId(depreciationRequest.getAssetId())){
@@ -33,11 +39,13 @@ public class DepreciationController {
         return new ResponseEntity(new String("Thông tin khấu hao chưa được tạo"),HttpStatus.NOT_ACCEPTABLE);
     }
     @PutMapping("/recall/{id}")
-    public ResponseEntity updateDepreciation(@PathVariable Long id){
+    public ResponseEntity updateDepreciation(@PathVariable Long id) throws ParseException {
         Depreciation depreciation = depreciationService.findDepreciationToUpdate(id);
         depreciation = depreciationMapping.updateDepreciation(depreciation);
-        if(depreciationService.saveDepreciation(depreciation))
+        if(depreciationService.saveDepreciation(depreciation)){
+            depreciationHistoryService.saveDepreciationHistory(depreciationHistoryMapping.getHistory(depreciation));
             return new ResponseEntity(new String("Lưu thông tin khấu hao thành công"), HttpStatus.CREATED);
+        }
         return new ResponseEntity(new String("Lưu thông tin khấu hao thất bại"),HttpStatus.NOT_ACCEPTABLE);
     }
 
@@ -49,5 +57,31 @@ public class DepreciationController {
         for(Depreciation depreciation: listDepreciation) depreciationResponses.add(depreciationMapping.EntityToResponse(depreciation));
         return new ResponseEntity<>(depreciationResponses, HttpStatus.OK);
     }
+
+    @GetMapping("/perMonth")
+    public ResponseEntity getDepreciationPerMonth(@RequestParam String startDate, @RequestParam String endDate) throws ParseException {
+        Date sDate = new SimpleDateFormat("yyyy-MM-dd").parse(startDate);
+        Date eDate = new SimpleDateFormat("yyyy-MM-dd").parse(endDate);
+        List<Depreciation> depreciationList = depreciationService.getDepreciationByFromDateAndToDate(sDate,eDate);
+        Map<String, Object> data = new HashMap<>();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        for(Depreciation depreciation: depreciationList){
+            if(depreciation.getToDate()!= null){
+                if(depreciation.getFromDate().before(sDate)&&depreciation.getToDate().before(eDate))
+                    data.put(depreciation.getId().toString(),depreciationServiceClient.getDepreciationValue(depreciation.getAssetId(), dateFormat.format(sDate), dateFormat.format(depreciation.getToDate())));
+                else if(depreciation.getFromDate().after(sDate)&&depreciation.getToDate().before(eDate))
+                    data.put(depreciation.getId().toString(),depreciationServiceClient.getDepreciationValue(depreciation.getAssetId(), dateFormat.format(depreciation.getFromDate()),dateFormat.format(depreciation.getToDate())));
+                else if(depreciation.getFromDate().after(sDate)&&depreciation.getToDate().after(eDate))
+                    data.put(depreciation.getId().toString(),depreciationServiceClient.getDepreciationValue(depreciation.getAssetId(), dateFormat.format(depreciation.getFromDate()),dateFormat.format(depreciation.getToDate())));
+            }else {
+                if(depreciation.getFromDate().before(sDate))
+                    data.put(depreciation.getId().toString(),depreciationServiceClient.getDepreciationValue(depreciation.getAssetId(), dateFormat.format(sDate),dateFormat.format(eDate)));
+                else
+                    data.put(depreciation.getId().toString(),depreciationServiceClient.getDepreciationValue(depreciation.getAssetId(), dateFormat.format(depreciation.getFromDate()),dateFormat.format(eDate)));
+            }
+        }
+        return new ResponseEntity(data,HttpStatus.OK);
+    }
+
 
 }

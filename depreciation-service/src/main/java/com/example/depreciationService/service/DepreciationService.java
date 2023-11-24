@@ -6,6 +6,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -19,6 +20,7 @@ public interface DepreciationService {
     Page<Depreciation> getAllDepreciation(int page, int size);
 
     Depreciation findDepreciationToUpdate(Long assetId);
-
-     void calculateDepreciation();
+     List<Depreciation> getAllDepreciationNoToDate();
+    List<Depreciation> getDepreciationByFromDateAndToDate(Date fromDate, Date toDate);
+    Depreciation findById(Long id);
 }

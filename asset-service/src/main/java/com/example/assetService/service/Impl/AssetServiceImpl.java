@@ -29,12 +29,12 @@ import java.util.regex.Pattern;
 public class AssetServiceImpl implements AssetService {
     private final AssetRepository assetRepository;
     private final AssetServiceClient assetServiceClient;
-    private final AssetTypeRepository assetTypeRepository;
+    private final ExcelUploadService excelUploadService;
 
     public void saveAssetsToDatabase(MultipartFile file){
         if(ExcelUploadService.isValidExcelFile(file)){
             try {
-                List<Asset> assets = ExcelUploadService.getAssetsDataFromExcel(file.getInputStream());
+                List<Asset> assets = excelUploadService.getAssetsDataFromExcel(file.getInputStream());
                 this.assetRepository.saveAll(assets);
             } catch (IOException e) {
                 throw new IllegalArgumentException("The file is not a valid excel file");

@@ -84,16 +84,10 @@ public class DepreciationController {
         return new ResponseEntity(data,HttpStatus.OK);
     }
 
-    @GetMapping("/history/test")
+    @GetMapping("/history")
     public ResponseEntity getDepreciationValue(@RequestParam(defaultValue = "-1") int month,
                                                @RequestParam(defaultValue = "-1") int year){
-        return new ResponseEntity(depreciationHistoryMapping.entityToResponse(depreciationHistoryService.getDepreciationValue(month,year)),HttpStatus.OK);
-    }
-
-    @GetMapping("/history")
-    public ResponseEntity getDepreciationValue1(@RequestParam String date) throws ParseException {
-        AssetDepreciationResponse assetDepreciationResponse = new AssetDepreciationResponse();
-        return new ResponseEntity(assetDepreciationResponse,HttpStatus.OK);
+        return new ResponseEntity(depreciationHistoryMapping.entityToResponse(month,year),HttpStatus.OK);
     }
 
 }

@@ -25,4 +25,5 @@ public class AssetResponse {
     private Long deptIdUsed;
     private UserResponse user;
     private String dateInStored;
+    private String serial;
 }

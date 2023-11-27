@@ -33,11 +33,21 @@ public class DepreciationHistoryServiceImpl implements DepreciationHistoryServic
     }
 
     @Override
-    public DepreciationHistory getDepreciationByDate(Date date) {
-        Optional<DepreciationHistory> depreciationHistory = depreciationHistoryRepository.findByMonthAndYear(date.getMonth() + 1, date.getYear() + 1900);
+    public DepreciationHistory getDepreciationByDate(int month, int year) {
+        Optional<DepreciationHistory> depreciationHistory = depreciationHistoryRepository.findByMonthAndYear(month,year);
         if(depreciationHistory.isPresent())
             return depreciationHistory.get();
         return null;
+    }
+
+    @Override
+    public Object getValueByMonthAndYearAndAsset(int mont, int year, Long assetId) {
+        return depreciationHistoryRepository.getValueByMonthAndValueAndId(mont, year, assetId);
+    }
+
+    @Override
+    public List<Object> getValueByYear(int year, Long assetId) {
+        return depreciationHistoryRepository.getValueByYearAndId(year, assetId);
     }
 
 

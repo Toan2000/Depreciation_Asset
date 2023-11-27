@@ -64,6 +64,10 @@ public class AssetController {
 //        assetServiceClient.addDepreciation(depreciationRequest);
 //        return new ResponseEntity(HttpStatus.OK);
 //    }
+    @GetMapping("/type")
+    public ResponseEntity getAllAssetType(){
+        return new ResponseEntity(assetTypeService.getAllAsset(), HttpStatus.OK);
+    }
 
     @GetMapping("/dept/{id}")
     public ResponseEntity<Response> getAssetByDeptId(@PathVariable Long id,

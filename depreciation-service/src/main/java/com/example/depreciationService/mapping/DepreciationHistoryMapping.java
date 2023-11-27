@@ -99,18 +99,7 @@ public class DepreciationHistoryMapping {
         }
         assetDepreciationResponse.setAmountDayOfMonth(LocalDate.from(DateTimeFormatter.ISO_LOCAL_DATE.parse((date.getYear()+1900)+"-"+(date.getMonth()+1)+"-01")).lengthOfMonth());
         assetDepreciationResponse.setAmountDateDepreciation(date.getDate());
-
-//        assetDepreciationResponse.setAccumulatedPrev(Double.valueOf(((Object[])depreciationHistoryService.getValueByMonthAndYearAndAsset(date.getMonth()+1, date.getYear()+1900, assetId))[1].toString()));
         Map<String,Object> months = new HashMap<>();
-//        for(Object b: depreciationHistoryService.getValueByYear(year,assetId))
-//            months.put(((Object[])b)[0].toString(),Double.valueOf(((Object[])b)[1].toString()));
-//        assetDepreciationResponse.setMonths(months);
-//        Object o = depreciationHistoryService.getValueByMonthAndYearAndAsset(1, year,assetId);
-//        Double valueYearPrev = 0.0;
-//        if(o != null)
-//            valueYearPrev = Double.valueOf(((Object[])o)[1].toString());
-//        assetDepreciationResponse.setAccumulatedPresentPrev(assetResponse.getPrice()-valueYearPrev);
-//        assetDepreciationResponse.setAccumulatedYearPrev(valueYearPrev);
         assetDepreciationResponse.setAssetName(assetResponse.getAssetName());
         return assetDepreciationResponse;
     }

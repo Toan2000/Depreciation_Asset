@@ -61,7 +61,10 @@ public class DepreciationHistoryMapping {
             for(Object b: depreciationHistoryService.getValueByYear(year,assetId))
                 months.put(((Object[])b)[0].toString(),Double.valueOf(((Object[])b)[1].toString()));
             assetDepreciationResponse.setMonths(months);
-            Double valueYearPrev = Double.valueOf(((Object[])depreciationHistoryService.getValueByMonthAndYearAndAsset(1, year,assetId))[1].toString());
+            Object o = depreciationHistoryService.getValueByMonthAndYearAndAsset(1, year,assetId);
+            Double valueYearPrev = 0.0;
+            if(o != null)
+                valueYearPrev = Double.valueOf(((Object[])o)[1].toString());
             assetDepreciationResponse.setAccumulatedPresentPrev(assetResponse.getPrice()-valueYearPrev);
             assetDepreciationResponse.setAccumulatedYearPrev(valueYearPrev);
             assetDepreciationResponse.setAssetName(assetResponse.getAssetName());

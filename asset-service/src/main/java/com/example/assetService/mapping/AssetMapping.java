@@ -43,6 +43,7 @@ public class AssetMapping {
             assetResponse.setDateUsed(dateFormat.format(asset.getDateUsed()));
         assetResponse.setUserIdUsed(asset.getUserUsedId());
         assetResponse.setDeptIdUsed(asset.getDeptUsedId());
+        assetResponse.setSerial(asset.getSerialNumber());
         if(asset.getUserUsedId()!=null){
             assetResponse.setUser(assetServiceClient.fetchUser(Long.valueOf(asset.getUserUsedId())));
         }

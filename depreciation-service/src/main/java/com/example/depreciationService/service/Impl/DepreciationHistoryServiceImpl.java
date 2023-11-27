@@ -28,8 +28,8 @@ public class DepreciationHistoryServiceImpl implements DepreciationHistoryServic
     }
 
     @Override
-    public List<Object> getDepreciationValue(Date date) {
-        return depreciationHistoryRepository.getAssetDepreciationHistory(date.getMonth()+1,date.getYear()+1900);
+    public List<Object> getDepreciationValue(int month, int year) {
+        return depreciationHistoryRepository.getAssetDepreciationHistory(month,year);
     }
 
     @Override

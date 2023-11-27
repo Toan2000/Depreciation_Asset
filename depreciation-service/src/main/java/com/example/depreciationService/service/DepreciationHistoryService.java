@@ -11,6 +11,6 @@ public interface DepreciationHistoryService {
     boolean saveDepreciationHistory(DepreciationHistory depreciationHistory);
 
     List<DepreciationHistory> findByDepreciation(Depreciation depreciation);
-    List<Object> getDepreciationValue(Date date);
+    List<Object> getDepreciationValue(int month,int year);
     DepreciationHistory getDepreciationByDate(Date date);
 }

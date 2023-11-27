@@ -85,8 +85,9 @@ public class DepreciationController {
     }
 
     @GetMapping("/history/test")
-    public ResponseEntity getDepreciationValue(@RequestParam String date) throws ParseException {
-        return new ResponseEntity(depreciationHistoryService.getDepreciationValue(new SimpleDateFormat("yyyy-MM-dd").parse(date)),HttpStatus.OK);
+    public ResponseEntity getDepreciationValue(@RequestParam(defaultValue = "-1") int month,
+                                               @RequestParam(defaultValue = "-1") int year){
+        return new ResponseEntity(depreciationHistoryMapping.entityToResponse(depreciationHistoryService.getDepreciationValue(month,year)),HttpStatus.OK);
     }
 
     @GetMapping("/history")

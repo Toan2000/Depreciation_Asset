@@ -13,6 +13,7 @@ import java.util.Map;
 @NoArgsConstructor
 public class AssetDepreciationResponse {
     private Long assetId;
+    private String assetName;
     private String SerialNumber;
     private String fromDate;
     private Double price;
@@ -23,6 +24,8 @@ public class AssetDepreciationResponse {
     private int amountDateDepreciation;
     private Double accumulatedPrev;
     private Double accumulatedPresent;
+    private Double accumulatedYearPrev;
+    private Double accumulatedPresentPrev;
     private Double accumulated;
     private Double valuePresent;
     private Map<String,Object> months;

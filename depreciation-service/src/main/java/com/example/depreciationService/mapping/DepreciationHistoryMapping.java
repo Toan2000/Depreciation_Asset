@@ -42,7 +42,6 @@ public class DepreciationHistoryMapping {
         for(Object a: depreciationHistoryService.getDepreciationValue(month, year)){
             Long assetId = Long.valueOf(((Object[])a)[0].toString());
             AssetResponse assetResponse = depreciationServiceClient.fetchAsset(assetId);
-            System.out.println(assetResponse);
             AssetDepreciationResponse assetDepreciationResponse = new AssetDepreciationResponse();
             assetDepreciationResponse.setAssetId(assetId);
             assetDepreciationResponse.setSerialNumber(assetResponse.getSerial());
@@ -60,8 +59,12 @@ public class DepreciationHistoryMapping {
             assetDepreciationResponse.setAccumulatedPresent(Double.valueOf(((Object[])depreciationHistoryService.getValueByMonthAndYearAndAsset(month, year,assetId))[1].toString()));
             Map<String,Object> months = new HashMap<>();
             for(Object b: depreciationHistoryService.getValueByYear(year,assetId))
-                months.put(((Object[])b)[0].toString(),Double.valueOf(((Object[])b)[0].toString()));
+                months.put(((Object[])b)[0].toString(),Double.valueOf(((Object[])b)[1].toString()));
             assetDepreciationResponse.setMonths(months);
+            Double valueYearPrev = Double.valueOf(((Object[])depreciationHistoryService.getValueByMonthAndYearAndAsset(1, year,assetId))[1].toString());
+            assetDepreciationResponse.setAccumulatedPresentPrev(assetResponse.getPrice()-valueYearPrev);
+            assetDepreciationResponse.setAccumulatedYearPrev(valueYearPrev);
+            assetDepreciationResponse.setAssetName(assetResponse.getAssetName());
             assetDepreciationResponseList.add(assetDepreciationResponse);
         }
         return assetDepreciationResponseList;

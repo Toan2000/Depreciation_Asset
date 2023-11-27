@@ -52,9 +52,9 @@ public class DepreciationHistoryMapping {
             Double accumulated = Double.valueOf(((Object[])a)[1].toString());
             assetDepreciationResponse.setAccumulated(accumulated);
             assetDepreciationResponse.setValuePresent(assetResponse.getPrice()-accumulated);
-            assetDepreciationResponse.setAmountDayOfMonth(LocalDate.from(DateTimeFormatter.ISO_LOCAL_DATE.parse(year+"-"+month+"-01")).lengthOfMonth());
-            assetDepreciationResponse.setAmountDateDepreciation(LocalDate.from(DateTimeFormatter.ISO_LOCAL_DATE.parse(year+"-"+month+"-01")).lengthOfMonth());
-            LocalDate localDate = LocalDate.from(DateTimeFormatter.ISO_LOCAL_DATE.parse(year+"-"+month+"-01")).minusDays(1);
+            assetDepreciationResponse.setAmountDayOfMonth(LocalDate.of(year,month,1).lengthOfMonth());
+            assetDepreciationResponse.setAmountDateDepreciation(LocalDate.of(year,month,1).lengthOfMonth());
+            LocalDate localDate = LocalDate.of(year,month,1).minusDays(1);
             assetDepreciationResponse.setAccumulatedPrev(Double.valueOf(((Object[])depreciationHistoryService.getValueByMonthAndYearAndAsset(localDate.getMonthValue(), localDate.getYear(), assetId))[1].toString()));
             assetDepreciationResponse.setAccumulatedPresent(Double.valueOf(((Object[])depreciationHistoryService.getValueByMonthAndYearAndAsset(month, year,assetId))[1].toString()));
             Map<String,Object> months = new HashMap<>();
@@ -72,6 +72,47 @@ public class DepreciationHistoryMapping {
         }
         return assetDepreciationResponseList;
 
+    }
+
+    public AssetDepreciationResponse getEntityToResponse(Long assetId){
+        Date date = new Date();
+        AssetDepreciationResponse assetDepreciationResponse = new AssetDepreciationResponse();
+        AssetResponse assetResponse = depreciationServiceClient.fetchAsset(assetId);
+        assetDepreciationResponse.setAssetId(assetId);
+        assetDepreciationResponse.setSerialNumber(assetResponse.getSerial());
+        assetDepreciationResponse.setPrice(assetResponse.getPrice());
+        assetDepreciationResponse.setFromDate(assetResponse.getDateUsed());
+        assetDepreciationResponse.setValuePerMonth(assetResponse.getPrice()/assetResponse.getAmountOfYear());
+        assetDepreciationResponse.setAmountMonth(assetResponse.getAmountOfYear());
+        // Giá trị khấu hao kì này
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Double depreciationPresent = depreciationServiceClient.getDepreciationValue(assetId,(date.getYear()+1900)+"-"+(date.getMonth()+1)+"-01",dateFormat.format(date));
+        // Giá trị đã khấu hao
+        Object accumulated = depreciationHistoryService.getValueHistoryBy(date.getMonth()+1, date.getYear()+1900, assetId);
+        if(accumulated!= null){
+            assetDepreciationResponse.setAccumulated(Double.valueOf(((Object[])accumulated)[1].toString()));
+            assetDepreciationResponse.setValuePresent(assetResponse.getPrice()-Double.valueOf(((Object[])accumulated)[1].toString()));
+        }
+        else {
+            assetDepreciationResponse.setAccumulated(0.0);
+            assetDepreciationResponse.setValuePresent(assetResponse.getPrice());
+        }
+        assetDepreciationResponse.setAmountDayOfMonth(LocalDate.from(DateTimeFormatter.ISO_LOCAL_DATE.parse((date.getYear()+1900)+"-"+(date.getMonth()+1)+"-01")).lengthOfMonth());
+        assetDepreciationResponse.setAmountDateDepreciation(date.getDate());
+
+//        assetDepreciationResponse.setAccumulatedPrev(Double.valueOf(((Object[])depreciationHistoryService.getValueByMonthAndYearAndAsset(date.getMonth()+1, date.getYear()+1900, assetId))[1].toString()));
+        Map<String,Object> months = new HashMap<>();
+//        for(Object b: depreciationHistoryService.getValueByYear(year,assetId))
+//            months.put(((Object[])b)[0].toString(),Double.valueOf(((Object[])b)[1].toString()));
+//        assetDepreciationResponse.setMonths(months);
+//        Object o = depreciationHistoryService.getValueByMonthAndYearAndAsset(1, year,assetId);
+//        Double valueYearPrev = 0.0;
+//        if(o != null)
+//            valueYearPrev = Double.valueOf(((Object[])o)[1].toString());
+//        assetDepreciationResponse.setAccumulatedPresentPrev(assetResponse.getPrice()-valueYearPrev);
+//        assetDepreciationResponse.setAccumulatedYearPrev(valueYearPrev);
+        assetDepreciationResponse.setAssetName(assetResponse.getAssetName());
+        return assetDepreciationResponse;
     }
 
 }

@@ -13,6 +13,7 @@ public interface DepreciationHistoryService {
     List<DepreciationHistory> findByDepreciation(Depreciation depreciation);
     List<Object> getDepreciationValue(int month,int year);
     DepreciationHistory getDepreciationByDate(int month, int year);
-    Object getValueByMonthAndYearAndAsset(int mont,int year, Long assetId);
+    Object getValueByMonthAndYearAndAsset(int month,int year, Long assetId);
     List<Object> getValueByYear(int year, Long assetId);
+    Object getValueHistoryBy(int month, int year, Long assetId);
 }

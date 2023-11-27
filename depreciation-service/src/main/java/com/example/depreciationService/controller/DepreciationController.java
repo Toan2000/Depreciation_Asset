@@ -91,5 +91,9 @@ public class DepreciationController {
                                                @RequestParam(defaultValue = "-1") int year){
         return new ResponseEntity(depreciationHistoryMapping.entityToResponse(month,year),HttpStatus.OK);
     }
+    @GetMapping("/history/{id}")
+    public ResponseEntity getDepreciationValue(@PathVariable Long id){
+        return new ResponseEntity(depreciationHistoryMapping.getEntityToResponse(id),HttpStatus.OK);
+    }
 
 }

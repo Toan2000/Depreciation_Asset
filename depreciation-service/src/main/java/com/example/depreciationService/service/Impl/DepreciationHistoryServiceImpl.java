@@ -50,5 +50,10 @@ public class DepreciationHistoryServiceImpl implements DepreciationHistoryServic
         return depreciationHistoryRepository.getValueByYearAndId(year, assetId);
     }
 
+    @Override
+    public Object getValueHistoryBy(int month, int year, Long assetId) {
+        return depreciationHistoryRepository.getAssetDepreciationHistoryByAssetId(month, year, assetId);
+    }
+
 
 }

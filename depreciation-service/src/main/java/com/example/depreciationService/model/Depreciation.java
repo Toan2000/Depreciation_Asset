@@ -27,6 +27,8 @@ public class Depreciation {
     private Long userId;
     @Column(name = "dept_id")
     private Long deptId;
+    @Column(name = "asset_type_id")
+    private Long assetTypeId;
     @Column(name = "from_date")
     private Date fromDate;
     @Column(name = "to_date")

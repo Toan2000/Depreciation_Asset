@@ -23,6 +23,8 @@ public class DepreciationMapping {
         depreciation.setStatus(1);
         depreciation.setDeptId(depreciationRequest.getDeptId());
         depreciation.setAssetId(depreciationRequest.getAssetId());
+        AssetResponse assetResponse = depreciationServiceClient.fetchAsset(depreciation.getAssetId());
+        depreciation.setAssetTypeId(assetResponse.getAssetTypeId());
         depreciation.setUserId(depreciationRequest.getUserId());
         depreciation.setCreateAt(new Date());
         depreciation.setFromDate(new Date());
@@ -39,12 +41,12 @@ public class DepreciationMapping {
         if(depreciation.getToDate()==null){
             depreciationResponse.setToDate(null);
             depreciationResponse.setAmountMonth(new Date().getMonth() - depreciation.getFromDate().getMonth());
-            depreciationResponse.setValueDepreciation(TimeUnit.DAYS.convert(Math.abs(new Date().getTime() - depreciation.getFromDate().getTime()), TimeUnit.MILLISECONDS)*(assetResponse.getPrice()/366));
+            depreciationResponse.setValueDepreciation(depreciationServiceClient.getDepreciationValue(depreciation.getAssetId(),dateFormat.format(depreciation.getFromDate()) ,dateFormat.format(new Date())));
         }
         else{
             depreciationResponse.setToDate(dateFormat.format(depreciation.getToDate()));
             depreciationResponse.setAmountMonth(depreciation.getToDate().getMonth() - depreciation.getFromDate().getMonth());
-            depreciationResponse.setValueDepreciation(TimeUnit.DAYS.convert(Math.abs(depreciation.getToDate().getTime() - depreciation.getFromDate().getTime()), TimeUnit.MILLISECONDS)*(assetResponse.getPrice()/366));
+            depreciationResponse.setValueDepreciation(depreciation.getValueDepreciation());
         }
         depreciationResponse.setCreateAt(dateFormat.format(depreciation.getCreateAt()));
         depreciationResponse.setActive(depreciation.isActive());

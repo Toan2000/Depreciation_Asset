@@ -28,6 +28,8 @@ public class DepreciationHistory {
     private int year;
     @Column(name ="value")
     private Double value;
+    @Column(name = "asset_id")
+    private Long assetId;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "\"depreciation_id\"")
     private Depreciation depreciation;

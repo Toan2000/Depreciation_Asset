@@ -2,6 +2,7 @@ package com.example.depreciationService.controller;
 
 import com.example.depreciationService.client.DepreciationServiceClient;
 import com.example.depreciationService.dto.request.DepreciationRequest;
+import com.example.depreciationService.dto.response.AssetDepreciationResponse;
 import com.example.depreciationService.dto.response.DepreciationResponse;
 import com.example.depreciationService.mapping.DepreciationHistoryMapping;
 import com.example.depreciationService.mapping.DepreciationMapping;
@@ -83,5 +84,15 @@ public class DepreciationController {
         return new ResponseEntity(data,HttpStatus.OK);
     }
 
+    @GetMapping("/history/test")
+    public ResponseEntity getDepreciationValue(@RequestParam String date) throws ParseException {
+        return new ResponseEntity(depreciationHistoryService.getDepreciationValue(new SimpleDateFormat("yyyy-MM-dd").parse(date)),HttpStatus.OK);
+    }
+
+    @GetMapping("/history")
+    public ResponseEntity getDepreciationValue1(@RequestParam String date) throws ParseException {
+        AssetDepreciationResponse assetDepreciationResponse = new AssetDepreciationResponse();
+        return new ResponseEntity(assetDepreciationResponse,HttpStatus.OK);
+    }
 
 }

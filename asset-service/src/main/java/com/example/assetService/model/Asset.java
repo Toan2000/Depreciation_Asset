@@ -13,7 +13,6 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Asset {
-
     @Id
     @Column(name = "asset_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,4 +41,8 @@ public class Asset {
     private Date dateExperience;
     @Column(name = "active")
     private boolean active;
+    @Column(name = "storage_id")
+    private Long storageId;
+    @Column(name= "brand_id")
+    private Long brandId;
 }

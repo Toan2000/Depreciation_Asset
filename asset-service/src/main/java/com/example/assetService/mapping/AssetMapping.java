@@ -7,8 +7,14 @@ import com.example.assetService.dto.response.AssetResponse;
 import com.example.assetService.dto.response.UserResponse;
 import com.example.assetService.model.Asset;
 import com.example.assetService.model.AssetType;
+import com.example.assetService.model.Brand;
+import com.example.assetService.model.Storage;
+import com.example.assetService.repository.AccessaryRepository;
 import com.example.assetService.repository.AssetTypeRepository;
+import com.example.assetService.service.AccesaryService;
 import com.example.assetService.service.AssetTypeService;
+import com.example.assetService.service.BrandService;
+import com.example.assetService.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +27,9 @@ import java.util.Optional;
 public class AssetMapping {
     private final AssetServiceClient assetServiceClient;
     private final AssetTypeService assetTypeService;
+    private final BrandService brandService;
+    private final StorageService storageService;
+    private final AccesaryService accesaryService;
     public AssetResponse getAssetResponse(Asset asset) {
         AssetResponse assetResponse = new AssetResponse();
         assetResponse.setAssetId(asset.getAssetId());
@@ -44,6 +53,13 @@ public class AssetMapping {
         assetResponse.setUserIdUsed(asset.getUserUsedId());
         assetResponse.setDeptIdUsed(asset.getDeptUsedId());
         assetResponse.setSerial(asset.getSerialNumber());
+        Brand brand = brandService.findById(asset.getBrandId());
+        assetResponse.setAssetBrandId(asset.getBrandId());
+        assetResponse.setAssetBrandName(brand.getBrandName());
+        Storage storage = storageService.findById(asset.getStorageId());
+        assetResponse.setAssetStorageId(asset.getStorageId());
+        assetResponse.setAssetStorageName(storage.getStorageName());
+        assetResponse.setAccessaries(accesaryService.findByAssetId(asset.getAssetId()));
         if(asset.getUserUsedId()!=null){
             assetResponse.setUser(assetServiceClient.fetchUser(Long.valueOf(asset.getUserUsedId())));
         }

@@ -27,8 +27,10 @@ public class DepreciationHistoryTask {
     @Scheduled(cron = "00 00 00 L * ?")
     public void calculateDepreciationPerMonth() throws ParseException {
         LocalDate today =LocalDate.now();
+        //Khởi tạo ngày đầu tháng và cuối tháng
         Date fromDate = new SimpleDateFormat("yyyy-MM-dd").parse(today.getYear()+"-"+today.getMonthValue()+"-01");
         Date toDate = new SimpleDateFormat("yyyy-MM-dd").parse(today.getYear()+"-"+today.getMonthValue()+"-"+today.lengthOfMonth());
+        //Tìm danh sách các khấu hao còn đang chạy và các khấu hao được tạo trong tháng
         List<Depreciation> depreciationList = depreciationService.getDepreciationByFromDateAndToDate(fromDate, toDate);
         for(Depreciation depreciation: depreciationList){
             DepreciationHistory depreciationHistory = new DepreciationHistory();

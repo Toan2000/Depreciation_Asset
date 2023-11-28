@@ -43,6 +43,8 @@ public class ExcelUploadService {
                         case 1 -> assetRequest.setAssetTypeId(Math.round(cell.getNumericCellValue()));
                         case 2 -> assetRequest.setPrice(cell.getNumericCellValue());
                         case 3 -> assetRequest.setSerial(cell.getStringCellValue());
+                        case 4 -> assetRequest.setBrandId(Math.round(cell.getNumericCellValue()));
+                        case 5 -> assetRequest.setStorageId(Math.round(cell.getNumericCellValue()));
                     }
 
                     cellIndex++;

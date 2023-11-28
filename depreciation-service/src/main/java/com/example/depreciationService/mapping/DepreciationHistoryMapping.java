@@ -55,8 +55,10 @@ public class DepreciationHistoryMapping {
             assetDepreciationResponse.setAmountDayOfMonth(LocalDate.of(year,month,1).lengthOfMonth());
             assetDepreciationResponse.setAmountDateDepreciation(LocalDate.of(year,month,1).lengthOfMonth());
             LocalDate localDate = LocalDate.of(year,month,1).minusDays(1);
-            assetDepreciationResponse.setAccumulatedPrev(Double.valueOf(((Object[])depreciationHistoryService.getValueByMonthAndYearAndAsset(localDate.getMonthValue(), localDate.getYear(), assetId))[1].toString()));
-            assetDepreciationResponse.setAccumulatedPresent(Double.valueOf(((Object[])depreciationHistoryService.getValueByMonthAndYearAndAsset(month, year,assetId))[1].toString()));
+            Object accumulatedPrev = depreciationHistoryService.getValueByMonthAndYearAndAsset(localDate.getMonthValue(), localDate.getYear(), assetId);
+            assetDepreciationResponse.setAccumulatedPrev(Double.valueOf(accumulatedPrev != null ? ((Object[])accumulatedPrev)[1].toString() : "0"));
+            Object accumulatedPresent = depreciationHistoryService.getValueByMonthAndYearAndAsset(month, year,assetId);
+            assetDepreciationResponse.setAccumulatedPresent(Double.valueOf((accumulatedPresent != null ? ((Object[])accumulatedPresent)[1].toString() :"0")));
             Map<String,Object> months = new HashMap<>();
             for(Object b: depreciationHistoryService.getValueByYear(year,assetId))
                 months.put(((Object[])b)[0].toString(),Double.valueOf(((Object[])b)[1].toString()));

@@ -18,6 +18,8 @@ public class Accessary {
     @Id
     @Column(name = "id")
     private Long id;
+    @Column(name = "asset_id")
+    private Long assetId;
     @Column(name = "name")
     private String name;
     @Column(name = "unit")

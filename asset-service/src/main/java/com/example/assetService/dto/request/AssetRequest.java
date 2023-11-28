@@ -16,4 +16,6 @@ public class AssetRequest {
     private long assetTypeId;
     private Double price;
     private String serial;
+    private Long brandId;
+    private Long storageId;
 }

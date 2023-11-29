@@ -96,4 +96,16 @@ public class DepreciationController {
         return new ResponseEntity(depreciationHistoryMapping.getEntityToResponse(id),HttpStatus.OK);
     }
 
+    @GetMapping("/dept/history")
+    public ResponseEntity getDepreciationValueAllDept(@RequestParam(defaultValue = "-1") int month,
+                                                      @RequestParam(defaultValue = "-1") int year){
+        return new ResponseEntity(depreciationHistoryMapping.getDepreciationDeptResponse(depreciationHistoryService.getDepreciationByAllDept(month, year)), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity getDepreciationByAssetId(@PathVariable Long assetId){
+
+    }
+
+
 }

@@ -45,4 +45,6 @@ public class Asset {
     private Long storageId;
     @Column(name= "brand_id")
     private Long brandId;
+    @Column(name= "update_id")
+    private Long updateId;
 }

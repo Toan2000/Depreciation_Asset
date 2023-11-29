@@ -11,14 +11,18 @@ import com.example.assetService.model.Brand;
 import com.example.assetService.model.Storage;
 import com.example.assetService.repository.AccessaryRepository;
 import com.example.assetService.repository.AssetTypeRepository;
-import com.example.assetService.service.AccesaryService;
-import com.example.assetService.service.AssetTypeService;
-import com.example.assetService.service.BrandService;
-import com.example.assetService.service.StorageService;
+import com.example.assetService.service.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.Optional;
 
@@ -30,6 +34,7 @@ public class AssetMapping {
     private final BrandService brandService;
     private final StorageService storageService;
     private final AccesaryService accesaryService;
+    private final AssetService assetService;
     public AssetResponse getAssetResponse(Asset asset) {
         AssetResponse assetResponse = new AssetResponse();
         assetResponse.setAssetId(asset.getAssetId());
@@ -87,5 +92,39 @@ public class AssetMapping {
         asset.setUserUsedId(userId);
         asset.setDeptUsedId(Long.valueOf(userResponse.getDept().getId()));
         return asset;
+    }
+    public Double calculatorDepreciation(Long id, String fromDate, String toDate, Double value, String lastDate) throws ParseException {
+        //Lấy thông tin tài sản và thời gian
+        Asset asset = assetService.findAssetById(id);
+        Date fDate = new SimpleDateFormat("yyyy-MM-dd").parse(fromDate);
+        Date tDate = new SimpleDateFormat("yyyy-MM-dd").parse(toDate);
+        Date lDate = new SimpleDateFormat("yyyy-MM-dd").parse(lastDate);
+        int daysInMonth = LocalDate.from(fDate.toInstant().atZone(ZoneId.systemDefault())).lengthOfMonth();
+        int amountMonth = (lDate.getDate() > daysInMonth/2 ? 0 : 1)
+                + (11 - lDate.getMonth())
+                + (asset.getDateExperience().getYear() - lDate.getYear() -1)*12
+                + (asset.getDateExperience().getMonth())
+                + (asset.getDateExperience().getDate() > daysInMonth/2 ? 1: 0);
+        //Kiểm tra thông tin là tháng cuối hay chưa
+        if(asset.getDateExperience().getMonth()==fDate.getMonth()&&asset.getDateExperience().getYear()==fDate.getYear())
+            return depreciation3(asset.getPrice(),value,amountMonth);
+        //Kiểm tra tài sản có nâng cấp hay không
+        if(asset.getUpdateId()!=null){
+            return depreciation2(asset.getPrice(),value,Long.valueOf(amountMonth),tDate.getDate()-fDate.getDate()+1,daysInMonth);
+        }
+        return depreciation1(asset.getPrice(), asset.getTime(),tDate.getDate()-fDate.getDate()+1,daysInMonth);
+    }
+    //Công thức tính khấu hao 1
+    public Double depreciation1(Double price, Long amountMonth, int days, int amountDay) {
+        return (price/amountMonth)*(Double.valueOf(days)/amountDay);
+    }
+
+    //Công thức tính khấu hao 2
+    public Double depreciation2(Double price, Double valueUsed, Long amountMonth, int days, int amountDay){
+        return ((price - valueUsed)/amountMonth)*(Double.valueOf(days)/amountDay);
+    }
+    //Công thức tính khấu hao 3
+    public Double depreciation3(Double price, Double valueUsed,int amountMonth){
+        return price - valueUsed - (amountMonth-1)*((price-valueUsed)/amountMonth);
     }
 }

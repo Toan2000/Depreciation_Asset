@@ -55,5 +55,10 @@ public class DepreciationHistoryServiceImpl implements DepreciationHistoryServic
         return depreciationHistoryRepository.getAssetDepreciationHistoryByAssetId(month, year, assetId);
     }
 
+    @Override
+    public List<Object> getDepreciationByAllDept(int month, int year) {
+        return depreciationHistoryRepository.getDepreciationByAllDept(month, year);
+    }
+
 
 }

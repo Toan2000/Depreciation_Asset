@@ -1,8 +1,7 @@
 package com.example.depreciationService.mapping;
 
 import com.example.depreciationService.client.DepreciationServiceClient;
-import com.example.depreciationService.dto.response.AssetDepreciationResponse;
-import com.example.depreciationService.dto.response.AssetResponse;
+import com.example.depreciationService.dto.response.*;
 import com.example.depreciationService.model.Depreciation;
 import com.example.depreciationService.model.DepreciationHistory;
 import com.example.depreciationService.service.DepreciationHistoryService;
@@ -104,6 +103,73 @@ public class DepreciationHistoryMapping {
         Map<String,Object> months = new HashMap<>();
         assetDepreciationResponse.setAssetName(assetResponse.getAssetName());
         return assetDepreciationResponse;
+    }
+    //Thông tin khấu hao theo phòng ban
+    public List<DepreciationDeptResponse> getDepreciationDeptResponse(List<Object> data){
+        List<DepreciationDeptResponse> depreciationDeptResponses = new ArrayList<>();
+        for(Object o : data){
+            DepartmentResponse departmentResponse = depreciationServiceClient.fetchDepartment(Long.valueOf(((Object[])o)[0].toString()));
+            DepreciationDeptResponse depreciationDeptResponse = depreciationDeptResponses.stream()
+                    .filter(dept -> dept.getDeptId() == departmentResponse.getId())
+                    .findFirst()
+                    .orElse(null);
+            AssetResponse assetResponse = depreciationServiceClient.fetchAsset(Long.valueOf(((Object[])o)[1].toString()));
+            //Nếu chưa tồn tại dept thì thêm
+            if(depreciationDeptResponse == null){
+                List<AssetType> assetTypes =  new ArrayList<>();
+                depreciationDeptResponse = new DepreciationDeptResponse();
+                depreciationDeptResponse.setDeptName(departmentResponse.getName());
+                depreciationDeptResponse.setDeptId(departmentResponse.getId());
+                AssetType assetType = new AssetType();
+                assetType.setTypeId(assetResponse.getAssetTypeId());
+                assetType.setPrice(assetResponse.getPrice());
+                assetType.setTypeName(assetResponse.getAssetTypeName());
+                assetType.setValuePresent(Double.valueOf(((Object[])o)[2].toString()));
+                assetType.setValuePrev(Double.valueOf(((Object[])o)[3].toString()));
+                //Cần fix lại
+                assetType.setValuePerMonth(assetType.getValuePresent());
+                assetTypes.add(assetType);
+                depreciationDeptResponse.setAssetTypes(assetTypes);
+                depreciationDeptResponse.setTotalPrice(assetResponse.getPrice());
+                depreciationDeptResponse.setTotalValuePerMonth(0.0);
+                depreciationDeptResponse.setTotalValuePresent(Double.valueOf(((Object[])o)[2].toString()));
+                depreciationDeptResponse.setTotalValuePrev(Double.valueOf(((Object[])o)[3].toString()));
+                depreciationDeptResponses.add(depreciationDeptResponse);
+            }
+            //Đã tồn tại dept => thực hiện gọp assetType
+            else {
+                List<AssetType> assetTypes = depreciationDeptResponse.getAssetTypes();
+                System.out.println(assetTypes);
+                AssetType assetType = assetTypes.stream()
+                        .filter(type -> type.getTypeId() == assetResponse.getAssetTypeId())
+                        .findFirst()
+                        .orElse(null);
+                //AssetType chưa tồn tại thực hiện thêm mới
+                if(assetType == null){
+                    assetType.setTypeId(assetResponse.getAssetTypeId());
+                    assetType.setPrice(assetResponse.getPrice());
+                    assetType.setTypeName(assetResponse.getAssetTypeName());
+                    assetType.setValuePresent(Double.valueOf(((Object[])o)[2].toString()));
+                    assetType.setValuePrev(Double.valueOf(((Object[])o)[3].toString()));
+                    //Cần fix lại
+                    assetType.setValuePerMonth(0.0);
+                    assetTypes.add(assetType);
+                }//Tính tổng lại assetType
+                else{
+                    assetType.setPrice(assetResponse.getPrice()+assetType.getPrice());
+                    assetType.setValuePresent(Double.valueOf(((Object[])o)[2].toString())+assetType.getValuePresent());
+                    assetType.setValuePrev(Double.valueOf(((Object[])o)[3].toString())+assetType.getValuePrev());
+                    assetType.setValuePerMonth(0.0);
+                }
+                depreciationDeptResponse.setTotalPrice(depreciationDeptResponse.getTotalPrice()+assetResponse.getPrice());
+                depreciationDeptResponse.setTotalValuePerMonth(depreciationDeptResponse.getTotalValuePerMonth()+0.0);
+                depreciationDeptResponse.setTotalValuePresent(depreciationDeptResponse.getTotalValuePresent()+Double.valueOf(((Object[])o)[2].toString()));
+                depreciationDeptResponse.setTotalValuePrev(depreciationDeptResponse.getTotalValuePrev()+Double.valueOf(((Object[])o)[3].toString()));
+                depreciationDeptResponse.setAssetTypes(assetTypes);
+            }
+        }
+
+        return depreciationDeptResponses;
     }
 
 }

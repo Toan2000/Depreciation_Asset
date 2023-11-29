@@ -20,6 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -67,6 +69,10 @@ public class AssetController {
     @GetMapping("/type")
     public ResponseEntity getAllAssetType(){
         return new ResponseEntity(assetTypeService.getAllAsset(), HttpStatus.OK);
+    }
+    @GetMapping("/type/{id}")
+    public ResponseEntity getAllAssetTypeById(@PathVariable Long assetType){
+        return new ResponseEntity(assetTypeService.findAssetTypeById(assetType), HttpStatus.OK);
     }
 
     @GetMapping("/dept/{id}")
@@ -217,5 +223,17 @@ public class AssetController {
             value += valuePerMonth*(tDate.getDayOfMonth()/Double.valueOf(tDate.lengthOfMonth()));
         }
         return new ResponseEntity(value,HttpStatus.OK);
+    }
+
+
+
+    //Hàm tính khấu hao theo tháng
+    @GetMapping("/depreciation/test/{id}")
+    public ResponseEntity getDepreciationPerMonthTest(@PathVariable Long id,
+                                                      @RequestParam String fromDate,
+                                                      @RequestParam String toDate,
+                                                      @RequestParam Double value,
+                                                      @RequestParam String lastDate) throws ParseException {
+        return new ResponseEntity(assetMapping.calculatorDepreciation(id,fromDate,toDate,value,lastDate),HttpStatus.OK);
     }
 }

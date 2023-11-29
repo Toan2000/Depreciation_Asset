@@ -1,16 +1,12 @@
 package com.example.depreciationService.client;
 
 import com.example.depreciationService.dto.response.AssetResponse;
+import com.example.depreciationService.dto.response.DepartmentResponse;
 import com.example.depreciationService.dto.response.UserResponse;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.Date;
 
 @Component
 @NoArgsConstructor
@@ -28,4 +24,8 @@ public class DepreciationServiceClient {
     public Double getDepreciationValue(Long assetId, String fromDate, String toDate){
         return template.getForObject("http://ASSET-SERVICE/api/asset/depreciation/" + assetId +"?fromDate="+fromDate+"&toDate="+toDate, Double.class);
     }
+    public DepartmentResponse fetchDepartment(Long deptId) {
+        return template.getForObject("http://USER-SERVICE/api/user/department/v1/" + deptId, DepartmentResponse.class);
+    }
+
 }

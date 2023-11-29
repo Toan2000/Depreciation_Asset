@@ -31,4 +31,8 @@ public class DepartmentController {
         data.put("dept",departmentService.findDepartmentById(id));
         return new ResponseEntity<>(new Response("Thông tin phòng ban",data),HttpStatus.OK);
     }
+    @GetMapping("/v1/{id}")
+    public ResponseEntity getDepartmentByIdV1(@PathVariable Long id){
+        return new ResponseEntity(departmentService.findDepartmentById(id),HttpStatus.OK);
+    }
 }

@@ -104,7 +104,7 @@ public class DepreciationController {
 
     @GetMapping("/{id}")
     public ResponseEntity getDepreciationByAssetId(@PathVariable Long assetId){
-
+        return null;
     }
 
 

@@ -34,7 +34,6 @@ public class AssetMapping {
     private final BrandService brandService;
     private final StorageService storageService;
     private final AccesaryService accesaryService;
-    private final AssetService assetService;
     public AssetResponse getAssetResponse(Asset asset) {
         AssetResponse assetResponse = new AssetResponse();
         assetResponse.setAssetId(asset.getAssetId());
@@ -93,9 +92,8 @@ public class AssetMapping {
         asset.setDeptUsedId(Long.valueOf(userResponse.getDept().getId()));
         return asset;
     }
-    public Double calculatorDepreciation(Long id, String fromDate, String toDate, Double value, String lastDate) throws ParseException {
+    public Double calculatorDepreciation(Asset asset, String fromDate, String toDate, Double value, String lastDate) throws ParseException {
         //Lấy thông tin tài sản và thời gian
-        Asset asset = assetService.findAssetById(id);
         Date fDate = new SimpleDateFormat("yyyy-MM-dd").parse(fromDate);
         Date tDate = new SimpleDateFormat("yyyy-MM-dd").parse(toDate);
         Date lDate = new SimpleDateFormat("yyyy-MM-dd").parse(lastDate);

@@ -234,6 +234,6 @@ public class AssetController {
                                                       @RequestParam String toDate,
                                                       @RequestParam Double value,
                                                       @RequestParam String lastDate) throws ParseException {
-        return new ResponseEntity(assetMapping.calculatorDepreciation(id,fromDate,toDate,value,lastDate),HttpStatus.OK);
+        return new ResponseEntity(assetMapping.calculatorDepreciation(assetService.findAssetById(id),fromDate,toDate,value,lastDate),HttpStatus.OK);
     }
 }

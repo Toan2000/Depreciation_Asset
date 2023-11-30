@@ -46,6 +46,7 @@ public class AssetMapping {
         assetResponse.setAssetGroup(assetType.getAssetGroup().getName());
         assetResponse.setPrice(asset.getPrice());
         assetResponse.setStatus(asset.getAssetStatus());
+
         switch (Math.toIntExact(asset.getAssetStatus())){
             case 0: assetResponse.setStatusName("Chưa sử dụng");break;
             case 1: assetResponse.setStatusName("Đang sử dụng");break;
@@ -55,6 +56,7 @@ public class AssetMapping {
         if(asset.getDateUsed() != null)
             assetResponse.setDateUsed(dateFormat.format(asset.getDateUsed()));
         assetResponse.setUserIdUsed(asset.getUserUsedId());
+        assetResponse.setExpDate(dateFormat.format(asset.getDateExperience()));
         assetResponse.setDeptIdUsed(asset.getDeptUsedId());
         assetResponse.setSerial(asset.getSerialNumber());
         Brand brand = brandService.findById(asset.getBrandId());

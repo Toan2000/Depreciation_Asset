@@ -1,6 +1,7 @@
 package com.example.depreciationService.client;
 
 import com.example.depreciationService.dto.response.AssetResponse;
+import com.example.depreciationService.dto.response.AssetTypeResponse;
 import com.example.depreciationService.dto.response.DepartmentResponse;
 import com.example.depreciationService.dto.response.UserResponse;
 import lombok.NoArgsConstructor;
@@ -24,8 +25,12 @@ public class DepreciationServiceClient {
     public Double getDepreciationValue(Long assetId, String fromDate, String toDate){
         return template.getForObject("http://ASSET-SERVICE/api/asset/depreciation/" + assetId +"?fromDate="+fromDate+"&toDate="+toDate, Double.class);
     }
+
     public DepartmentResponse fetchDepartment(Long deptId) {
         return template.getForObject("http://USER-SERVICE/api/user/department/v1/" + deptId, DepartmentResponse.class);
+    }
+    public AssetTypeResponse fetchAssetType(Long typeId) {
+        return template.getForObject("http://ASSET-SERVICE/api/asset/type/" + typeId, AssetTypeResponse.class);
     }
 
 }

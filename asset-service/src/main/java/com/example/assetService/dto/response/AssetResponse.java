@@ -33,5 +33,6 @@ public class AssetResponse {
     private UserResponse user;
     private String dateInStored;
     private String serial;
+    private String expDate;
     private List<Accessary> accessaries;
 }

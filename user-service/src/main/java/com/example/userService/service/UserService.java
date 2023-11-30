@@ -12,4 +12,5 @@ import java.util.List;
 public interface UserService {
     List<User> findAllUser(Pageable pageable);
     User findUserById(Long id);
+    long countUser();
 }

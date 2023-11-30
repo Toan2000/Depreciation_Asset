@@ -7,7 +7,6 @@ import com.example.depreciationService.service.DepreciationHistoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,8 +50,13 @@ public class DepreciationHistoryServiceImpl implements DepreciationHistoryServic
     }
 
     @Override
-    public Object getValueHistoryBy(int month, int year, Long assetId) {
+    public Object getValueHistoryByAsset(int month, int year, Long assetId) {
         return depreciationHistoryRepository.getAssetDepreciationHistoryByAssetId(month, year, assetId);
+    }
+
+    @Override
+    public Object getValueHistoryByDepreciation(int month, int year, Long depreciationId) {
+        return depreciationHistoryRepository.getAssetDepreciationHistoryByDepreciationId(month, year, depreciationId);
     }
 
     @Override
@@ -60,5 +64,14 @@ public class DepreciationHistoryServiceImpl implements DepreciationHistoryServic
         return depreciationHistoryRepository.getDepreciationByAllDept(month, year);
     }
 
+    @Override
+    public List<Object> getDepreciationByAllDeptInYear(int year, Long deptId) {
+        return depreciationHistoryRepository.getDepreciationByAllDeptInYear(year, deptId);
+    }
+
+    @Override
+    public Double totalValueDepreciation(){
+        return depreciationHistoryRepository.totalValueDepreciation();
+    }
 
 }

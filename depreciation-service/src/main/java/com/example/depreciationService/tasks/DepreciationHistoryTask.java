@@ -39,6 +39,7 @@ public class DepreciationHistoryTask {
             depreciationHistory.setYear(today.getYear());
             depreciationHistory.setDepreciation(depreciation);
             depreciationHistory.setAssetId(depreciation.getAssetId());
+            depreciationHistory.setAssetId(depreciation.getAssetTypeId());
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             if(depreciation.getFromDate().before(fromDate))
                 depreciationHistory.setValue(depreciationServiceClient.getDepreciationValue(depreciation.getAssetId(), dateFormat.format(fromDate),dateFormat.format(toDate)));

@@ -71,8 +71,8 @@ public class AssetController {
         return new ResponseEntity(assetTypeService.getAllAsset(), HttpStatus.OK);
     }
     @GetMapping("/type/{id}")
-    public ResponseEntity getAllAssetTypeById(@PathVariable Long assetType){
-        return new ResponseEntity(assetTypeService.findAssetTypeById(assetType), HttpStatus.OK);
+    public ResponseEntity getAllAssetTypeById(@PathVariable Long id){
+        return new ResponseEntity(assetTypeService.findAssetTypeById(id), HttpStatus.OK);
     }
 
     @GetMapping("/dept/{id}")
@@ -235,5 +235,9 @@ public class AssetController {
                                                       @RequestParam Double value,
                                                       @RequestParam String lastDate) throws ParseException {
         return new ResponseEntity(assetMapping.calculatorDepreciation(assetService.findAssetById(id),fromDate,toDate,value,lastDate),HttpStatus.OK);
+    }
+    @GetMapping("/count")
+    public ResponseEntity getCountAsset(){
+        return new ResponseEntity(assetService.countAsset(),HttpStatus.OK);
     }
 }

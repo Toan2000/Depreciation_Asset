@@ -2,11 +2,11 @@ package com.example.depreciationService.controller;
 
 import com.example.depreciationService.client.DepreciationServiceClient;
 import com.example.depreciationService.dto.request.DepreciationRequest;
-import com.example.depreciationService.dto.response.AssetDepreciationResponse;
-import com.example.depreciationService.dto.response.DepreciationResponse;
+import com.example.depreciationService.dto.response.*;
 import com.example.depreciationService.mapping.DepreciationHistoryMapping;
 import com.example.depreciationService.mapping.DepreciationMapping;
 import com.example.depreciationService.model.Depreciation;
+import com.example.depreciationService.model.DepreciationHistory;
 import com.example.depreciationService.service.DepreciationHistoryService;
 import com.example.depreciationService.service.DepreciationService;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +30,7 @@ public class DepreciationController {
     private final DepreciationHistoryService depreciationHistoryService;
     private final DepreciationServiceClient depreciationServiceClient;
     private final DepreciationHistoryMapping depreciationHistoryMapping;
+    //Tạo thông tin khấu hao
     @PostMapping("/create")
     public ResponseEntity saveDepreciation(@RequestBody DepreciationRequest depreciationRequest){
         for(Depreciation depreciation : depreciationService.findByAssetId(depreciationRequest.getAssetId())){
@@ -41,6 +42,8 @@ public class DepreciationController {
             return new ResponseEntity(new String("Thông tin khấu hao đã được tạo"), HttpStatus.CREATED);
         return new ResponseEntity(new String("Thông tin khấu hao chưa được tạo"),HttpStatus.NOT_ACCEPTABLE);
     }
+
+    //API Thực hiện tính toán và ngưng khấu hao
     @PutMapping("/recall/{id}")
     public ResponseEntity updateDepreciation(@PathVariable Long id) throws ParseException {
         Depreciation depreciation = depreciationService.findDepreciationToUpdate(id);
@@ -51,7 +54,7 @@ public class DepreciationController {
         }
         return new ResponseEntity(new String("Lưu thông tin khấu hao thất bại"),HttpStatus.NOT_ACCEPTABLE);
     }
-
+    //Tìm thông tin records Depreciation trong DB
     @GetMapping("")
     public ResponseEntity getDepreciation(@RequestParam(defaultValue = "0") int page,
                                           @RequestParam(defaultValue = "10") int size){
@@ -91,21 +94,63 @@ public class DepreciationController {
                                                @RequestParam(defaultValue = "-1") int year){
         return new ResponseEntity(depreciationHistoryMapping.entityToResponse(month,year),HttpStatus.OK);
     }
-    @GetMapping("/history/{id}")
-    public ResponseEntity getDepreciationValue(@PathVariable Long id){
-        return new ResponseEntity(depreciationHistoryMapping.getEntityToResponse(id),HttpStatus.OK);
-    }
+//    @GetMapping("/history/{id}")
+//    public ResponseEntity getDepreciationValue(@PathVariable Long id){
+//        return new ResponseEntity(depreciationHistoryMapping.getEntityToResponse(id),HttpStatus.OK);
+//    }
 
+    //Tất cả thông tin khấu hao của phòng ban
     @GetMapping("/dept/history")
     public ResponseEntity getDepreciationValueAllDept(@RequestParam(defaultValue = "-1") int month,
                                                       @RequestParam(defaultValue = "-1") int year){
         return new ResponseEntity(depreciationHistoryMapping.getDepreciationDeptResponse(depreciationHistoryService.getDepreciationByAllDept(month, year)), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity getDepreciationByAssetId(@PathVariable Long assetId){
-        return null;
+//    @GetMapping("/test")
+//    public ResponseEntity test(){
+//        List<AssetType> assetTypes = new ArrayList<>();
+//        Map<String,Double> data = new HashMap<>();
+//        for(Object o: depreciationHistoryService.getDepreciationByAllDeptInYear(2023,Long.valueOf(2))){
+//            Long idType = Long.valueOf(((Object[])o)[1].toString());
+//            Long month = Long.valueOf(((Object[])o)[2].toString());
+//            Double value = Double.valueOf(((Object[])o)[3].toString());
+//            System.out.println(idType+" -"+month+ " "+value);
+//            AssetType assetType = assetTypes.stream()
+//                    .filter(type -> type.getTypeId() == idType)
+//                    .findFirst()
+//                    .orElse(null);
+//            if(assetType == null){
+//                assetType = new AssetType();
+//                AssetTypeResponse assetTypeResponse = depreciationServiceClient.fetchAssetType(idType);
+//                assetType.setTypeId(idType);
+//                assetType.setTypeName(assetTypeResponse.getAssetName());
+//                assetType.setPrice(value);
+//            }else{
+//                if(data.get(month.toString())==null)
+//                    data.put(month.toString(),Double.valueOf(((Object[])o)[3].toString()));
+//                else{
+//                    data.put(month.toString(),value+Double.valueOf(data.get(((Object[])o)[2].toString())));
+//                }
+//            }
+//        }
+//        return new ResponseEntity(depreciationHistoryService.getDepreciationByAllDeptInYear(2023,Long.valueOf(2)),HttpStatus.OK);
+//    }
+    //Thông tin khấu hao theo mỗi tài sản
+    @GetMapping("/asset/{id}")
+    public ResponseEntity getDepreciationByAssetId(@PathVariable Long id){
+        List<Depreciation> depreciationList =  depreciationService.findByAssetId(id);
+        DepreciationByAssetResponse depreciation = depreciationMapping.getDepreciationAssetResponse(id,depreciationList);
+        return new ResponseEntity(depreciation,HttpStatus.OK);
     }
-
+    //Thông tin khấu hao từng tháng theo mã khấu hao
+    @GetMapping("/history/{id}")
+    public ResponseEntity getHistoryDepreciationByDepreciationId(@PathVariable Long id){
+        Depreciation depreciation = depreciationService.findById(id);
+        return new ResponseEntity(depreciationHistoryMapping.getDepreciationHistoryByDepreciation(depreciation),HttpStatus.OK);
+    }
+    @GetMapping("/count")
+    public ResponseEntity countDepreciationValue(){
+        return new ResponseEntity(depreciationHistoryService.totalValueDepreciation(),HttpStatus.OK);
+    }
 
 }

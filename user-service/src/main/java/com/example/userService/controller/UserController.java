@@ -44,6 +44,10 @@ public class UserController {
     public User getUserByIdv1(@PathVariable long id){
         return userService.findUserById(id);
     }
+    @GetMapping("/count")
+    public ResponseEntity countUser(){
+        return new ResponseEntity(userService.countUser(),HttpStatus.OK);
+    }
 
 
 }

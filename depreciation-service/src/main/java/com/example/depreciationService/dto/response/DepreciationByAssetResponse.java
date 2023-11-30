@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -18,17 +20,25 @@ public class DepreciationByAssetResponse {
     private String changePrice;
     private Double valuePrev;
     private Double valuePre;
-    private Double amountMonth;
+    private int amountMonth;
     private Double totalValue;
-    DepreciationAssetHistory depreciationAssetHistory;
+    List<DepreciationAssetHistory> listDepreciationAssetHistory;
     @Data
-    @AllArgsConstructor
-    public class DepreciationAssetHistory{
+    public static class DepreciationAssetHistory{
+        private Long depreciationId;
         private UserResponse userResponse;
         private String fromDate;
         private String toDate;
         private Double value;
-        private int time;
+        private long time;
 
+        public DepreciationAssetHistory(Long depreciationId,UserResponse userResponse, String fromDate, String toDate, Double value, long time){
+            this.userResponse = userResponse;
+            this.depreciationId = depreciationId;
+            this.fromDate = fromDate;
+            this.toDate = toDate;
+            this.value =value;
+            this.time = time;
+        }
     }
 }

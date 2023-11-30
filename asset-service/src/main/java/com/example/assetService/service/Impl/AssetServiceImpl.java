@@ -123,6 +123,11 @@ public class AssetServiceImpl implements AssetService {
         return false;
     }
 
+    @Override
+    public long countAsset() {
+        return assetRepository.count();
+    }
+
 
     @Override
     public UserResponse getAssets1() {

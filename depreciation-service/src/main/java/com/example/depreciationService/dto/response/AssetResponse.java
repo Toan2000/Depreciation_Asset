@@ -22,5 +22,6 @@ public class AssetResponse {
     private Double price;
     private String dateUsed;
     private String dateInStored;
+    private String expDate;
     private String serial;
 }

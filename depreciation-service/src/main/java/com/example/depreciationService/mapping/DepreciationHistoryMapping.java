@@ -89,7 +89,7 @@ public class DepreciationHistoryMapping {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Double depreciationPresent = depreciationServiceClient.getDepreciationValue(assetId,(date.getYear()+1900)+"-"+(date.getMonth()+1)+"-01",dateFormat.format(date));
         // Giá trị đã khấu hao
-        Object accumulated = depreciationHistoryService.getValueHistoryBy(date.getMonth()+1, date.getYear()+1900, assetId);
+        Object accumulated = depreciationHistoryService.getValueHistoryByAsset(date.getMonth()+1, date.getYear()+1900, assetId);
         if(accumulated!= null){
             assetDepreciationResponse.setAccumulated(Double.valueOf(((Object[])accumulated)[1].toString()));
             assetDepreciationResponse.setValuePresent(assetResponse.getPrice()-Double.valueOf(((Object[])accumulated)[1].toString()));
@@ -172,4 +172,40 @@ public class DepreciationHistoryMapping {
         return depreciationDeptResponses;
     }
 
+    public DepreciationByAssetResponse getDepreciationHistoryByAsset(Long assetId){
+        DepreciationByAssetResponse depreciationByAssetResponse = new DepreciationByAssetResponse();
+        AssetResponse assetResponse = depreciationServiceClient.fetchAsset(assetId);
+        depreciationByAssetResponse.setAssetId(assetResponse.getAssetId());
+        depreciationByAssetResponse.setAssetName(assetResponse.getAssetName());
+        depreciationByAssetResponse.setPrice(assetResponse.getPrice());
+        depreciationByAssetResponse.setFromDate(assetResponse.getDateUsed());
+        depreciationByAssetResponse.setAmountMonth(assetResponse.getAmountOfYear());
+        depreciationByAssetResponse.setExpDate(assetResponse.getExpDate());
+        return null;
+//        depreciationByAssetResponse.setValuePre(depreciationHistoryService.getValueHistoryByAsset(LocalDate.now().getMonthValue(),LocalDate.now().getYear(), assetId));
+    }
+
+    public List<DepreciationHistoryByDepreciation> getDepreciationHistoryByDepreciation(Depreciation depreciation){
+        List<DepreciationHistoryByDepreciation> list = new ArrayList<>();
+        List<DepreciationHistory> depreciationHistories = depreciationHistoryService.findByDepreciation(depreciation);
+        for(DepreciationHistory depreciationHistory : depreciationHistories){
+            DepreciationHistoryByDepreciation depreciationHistoryByDepreciation  = list.stream()
+                    .filter(o -> o.getYear() == depreciationHistory.getYear())
+                    .findFirst()
+                    .orElse(null);
+            if(depreciationHistoryByDepreciation == null){
+                depreciationHistoryByDepreciation = new DepreciationHistoryByDepreciation();
+                depreciationHistoryByDepreciation.setYear(depreciationHistory.getYear());
+                Map<String,Double> months = new HashMap<>();
+                months.put(String.valueOf(depreciationHistory.getMonth()),depreciationHistory.getValue());
+                depreciationHistoryByDepreciation.setMonths(months);
+                list.add(depreciationHistoryByDepreciation);
+            }else{
+                Map<String,Double> months = depreciationHistoryByDepreciation.getMonths();
+                months.put(String.valueOf(depreciationHistory.getMonth()),depreciationHistory.getValue());
+                depreciationHistoryByDepreciation.setMonths(months);
+            }
+        }
+        return list;
+    }
 }

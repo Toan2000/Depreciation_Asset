@@ -1,20 +1,18 @@
 package com.example.depreciationService.dto.response;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Map;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AssetType {
-    private Long typeId;
-    private String typeName;
-    private Double price;
-    private Double valuePerMonth;
-    private Double valuePrev;
-    private Double valuePresent;
+public class DepreciationHistoryByDepreciation {
+    private int year;
     private Map<String,Double> months;
 }

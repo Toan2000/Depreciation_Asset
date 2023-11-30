@@ -40,19 +40,14 @@ class Example {
 
 public class Main {
     public static void main(String[] args) {
-        List<Example> list = new ArrayList<>();
-        list.add(new Example("1","SN1",14));
-        list.add(new Example("2","SN2",14));
-        list.add(new Example("3","SN3",14));
-        list.add(new Example("4","SN1",19));
-        list.add(new Example("5","SN2",11));
-        // add elements to list
+        Map<String,Double> data = new HashMap<>();
+        data.put("1",30.0);
 
-        Map<String, Integer> map = new HashMap<>();
-        for (Example example : list) {
-            map.put(example.getSN(), map.getOrDefault(example.getSN(), 0) + example.getValue());
-        }
-        System.out.println(map);
+        data.get("1");
+        System.out.println(data);
+        data.put("1",data.get("1")+40.0);
+        System.out.println(data);
+        System.out.println(data.get("2"));
 
     }
 }

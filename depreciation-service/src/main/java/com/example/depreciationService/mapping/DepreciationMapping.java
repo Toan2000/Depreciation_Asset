@@ -3,19 +3,27 @@ package com.example.depreciationService.mapping;
 import com.example.depreciationService.client.DepreciationServiceClient;
 import com.example.depreciationService.dto.request.DepreciationRequest;
 import com.example.depreciationService.dto.response.AssetResponse;
+import com.example.depreciationService.dto.response.DepreciationByAssetResponse;
 import com.example.depreciationService.dto.response.DepreciationResponse;
+import com.example.depreciationService.dto.response.UserResponse;
 import com.example.depreciationService.model.Depreciation;
+import com.example.depreciationService.service.DepreciationHistoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Component
 @RequiredArgsConstructor
 public class DepreciationMapping {
     private final DepreciationServiceClient depreciationServiceClient;
+    private final DepreciationHistoryService depreciationHistoryService;
 
     public Depreciation requestToEntity(DepreciationRequest depreciationRequest){
         Depreciation depreciation = new Depreciation();
@@ -62,6 +70,47 @@ public class DepreciationMapping {
         depreciation.setValueDepreciation(depreciationServiceClient.getDepreciationValue(depreciation.getAssetId(),dateFormat.format(depreciation.getFromDate()), dateFormat.format(new Date())));
         depreciation.setStatus(2);
         return depreciation;
+    }
+
+    public DepreciationByAssetResponse getDepreciationAssetResponse(Long assetId, List<Depreciation> lDepreciation){
+        DepreciationByAssetResponse depreciationByAssetResponse = new DepreciationByAssetResponse();
+        Double valuePrev = 0.0;
+        Double valuePre = 0.0;
+        AssetResponse assetResponse = depreciationServiceClient.fetchAsset(assetId);
+        List<DepreciationByAssetResponse.DepreciationAssetHistory> list = new ArrayList<>();
+        for(Depreciation depreciation: lDepreciation){
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            UserResponse userResponse = depreciationServiceClient.fetchUser(depreciation.getUserId());
+            Double value = 0.0;
+            Date toDate = depreciation.getToDate();
+            if(toDate == null){
+                toDate = new Date();
+                Object object = depreciationHistoryService.getValueHistoryByDepreciation(toDate.getMonth()+1,toDate.getYear()+1900, depreciation.getId());
+                value += object != null ? Double.valueOf(((Object[])object)[1].toString()): 0.0;
+                valuePrev += value;
+                valuePre = depreciationServiceClient.getDepreciationValue(depreciation.getAssetId(), (toDate.getYear()+1900)+"-"+(toDate.getMonth()+1)+"-01", dateFormat.format(toDate));
+                value += valuePre;
+            }else valuePrev+=depreciation.getValueDepreciation();
+            long amountDate = TimeUnit.DAYS.convert(Math.abs(toDate.getTime() - depreciation.getFromDate().getTime()), TimeUnit.MILLISECONDS);
+            list.add(new DepreciationByAssetResponse.DepreciationAssetHistory(depreciation.getId()
+                    ,userResponse
+                    ,dateFormat.format(depreciation.getFromDate())
+                    ,depreciation.getToDate()==null?"Đang sử dụng": dateFormat.format(depreciation.getToDate())
+                    ,depreciation.getValueDepreciation()==null?value: depreciation.getValueDepreciation()
+                    ,amountDate ));
+        }
+        depreciationByAssetResponse.setValuePre(valuePre);
+        depreciationByAssetResponse.setValuePrev(valuePrev);
+        depreciationByAssetResponse.setAmountMonth(assetResponse.getAmountOfYear());
+        depreciationByAssetResponse.setAssetId(assetId);
+        depreciationByAssetResponse.setAssetName(assetResponse.getAssetName());
+        depreciationByAssetResponse.setPrice(assetResponse.getPrice());
+        depreciationByAssetResponse.setFromDate(assetResponse.getDateUsed());
+        depreciationByAssetResponse.setExpDate(assetResponse.getExpDate());
+        depreciationByAssetResponse.setTotalValue(assetResponse.getPrice()-valuePre-valuePrev);
+        depreciationByAssetResponse.setChangePrice("Không");
+        depreciationByAssetResponse.setListDepreciationAssetHistory(list);
+        return depreciationByAssetResponse;
     }
 
 }

@@ -240,4 +240,9 @@ public class AssetController {
     public ResponseEntity getCountAsset(){
         return new ResponseEntity(assetService.countAsset(),HttpStatus.OK);
     }
+
+    @GetMapping("/delivery/{id}")
+    public ResponseEntity getAssetDelivery(@PathVariable Long id){
+        return new ResponseEntity(assetMapping.getAssetDeliveryResponse(assetService.findAssetById(id)),HttpStatus.OK);
+    }
 }

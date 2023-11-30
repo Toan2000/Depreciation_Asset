@@ -184,28 +184,4 @@ public class DepreciationHistoryMapping {
         return null;
 //        depreciationByAssetResponse.setValuePre(depreciationHistoryService.getValueHistoryByAsset(LocalDate.now().getMonthValue(),LocalDate.now().getYear(), assetId));
     }
-
-    public List<DepreciationHistoryByDepreciation> getDepreciationHistoryByDepreciation(Depreciation depreciation){
-        List<DepreciationHistoryByDepreciation> list = new ArrayList<>();
-        List<DepreciationHistory> depreciationHistories = depreciationHistoryService.findByDepreciation(depreciation);
-        for(DepreciationHistory depreciationHistory : depreciationHistories){
-            DepreciationHistoryByDepreciation depreciationHistoryByDepreciation  = list.stream()
-                    .filter(o -> o.getYear() == depreciationHistory.getYear())
-                    .findFirst()
-                    .orElse(null);
-            if(depreciationHistoryByDepreciation == null){
-                depreciationHistoryByDepreciation = new DepreciationHistoryByDepreciation();
-                depreciationHistoryByDepreciation.setYear(depreciationHistory.getYear());
-                Map<String,Double> months = new HashMap<>();
-                months.put(String.valueOf(depreciationHistory.getMonth()),depreciationHistory.getValue());
-                depreciationHistoryByDepreciation.setMonths(months);
-                list.add(depreciationHistoryByDepreciation);
-            }else{
-                Map<String,Double> months = depreciationHistoryByDepreciation.getMonths();
-                months.put(String.valueOf(depreciationHistory.getMonth()),depreciationHistory.getValue());
-                depreciationHistoryByDepreciation.setMonths(months);
-            }
-        }
-        return list;
-    }
 }

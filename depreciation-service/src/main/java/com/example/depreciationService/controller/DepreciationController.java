@@ -143,11 +143,11 @@ public class DepreciationController {
         return new ResponseEntity(depreciation,HttpStatus.OK);
     }
     //Thông tin khấu hao từng tháng theo mã khấu hao
-    @GetMapping("/history/{id}")
-    public ResponseEntity getHistoryDepreciationByDepreciationId(@PathVariable Long id){
-        Depreciation depreciation = depreciationService.findById(id);
-        return new ResponseEntity(depreciationHistoryMapping.getDepreciationHistoryByDepreciation(depreciation),HttpStatus.OK);
-    }
+//    @GetMapping("/history/{id}")
+//    public ResponseEntity getHistoryDepreciationByDepreciationId(@PathVariable Long id){
+//        Depreciation depreciation = depreciationService.findById(id);
+//        return new ResponseEntity(depreciationHistoryMapping.getDepreciationHistoryByDepreciation(depreciation),HttpStatus.OK);
+//    }
     @GetMapping("/count")
     public ResponseEntity countDepreciationValue(){
         return new ResponseEntity(depreciationHistoryService.totalValueDepreciation(),HttpStatus.OK);

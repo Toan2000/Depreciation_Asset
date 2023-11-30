@@ -27,4 +27,5 @@ public interface AssetService {
     Page<Asset> filterAssets(String name, Long deptId, Long userId, Long status,Long assetType, Date fromDate, Date toDate, int page, int size, String sort);
     boolean createAsset(Asset asset);
     long countAsset();
+
 }

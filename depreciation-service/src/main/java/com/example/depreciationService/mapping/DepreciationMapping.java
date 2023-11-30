@@ -2,11 +2,9 @@ package com.example.depreciationService.mapping;
 
 import com.example.depreciationService.client.DepreciationServiceClient;
 import com.example.depreciationService.dto.request.DepreciationRequest;
-import com.example.depreciationService.dto.response.AssetResponse;
-import com.example.depreciationService.dto.response.DepreciationByAssetResponse;
-import com.example.depreciationService.dto.response.DepreciationResponse;
-import com.example.depreciationService.dto.response.UserResponse;
+import com.example.depreciationService.dto.response.*;
 import com.example.depreciationService.model.Depreciation;
+import com.example.depreciationService.model.DepreciationHistory;
 import com.example.depreciationService.service.DepreciationHistoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -14,9 +12,7 @@ import org.springframework.stereotype.Component;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -79,6 +75,7 @@ public class DepreciationMapping {
         AssetResponse assetResponse = depreciationServiceClient.fetchAsset(assetId);
         List<DepreciationByAssetResponse.DepreciationAssetHistory> list = new ArrayList<>();
         for(Depreciation depreciation: lDepreciation){
+            List<DepreciationHistoryByDepreciation> depreciationList = getDepreciationHistoryByDepreciation(depreciation);
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             UserResponse userResponse = depreciationServiceClient.fetchUser(depreciation.getUserId());
             Double value = 0.0;
@@ -97,7 +94,8 @@ public class DepreciationMapping {
                     ,dateFormat.format(depreciation.getFromDate())
                     ,depreciation.getToDate()==null?"Đang sử dụng": dateFormat.format(depreciation.getToDate())
                     ,depreciation.getValueDepreciation()==null?value: depreciation.getValueDepreciation()
-                    ,amountDate ));
+                    ,amountDate
+                    ,depreciationList));
         }
         depreciationByAssetResponse.setValuePre(valuePre);
         depreciationByAssetResponse.setValuePrev(valuePrev);
@@ -111,6 +109,29 @@ public class DepreciationMapping {
         depreciationByAssetResponse.setChangePrice("Không");
         depreciationByAssetResponse.setListDepreciationAssetHistory(list);
         return depreciationByAssetResponse;
+    }
+    public List<DepreciationHistoryByDepreciation> getDepreciationHistoryByDepreciation(Depreciation depreciation){
+        List<DepreciationHistoryByDepreciation> list = new ArrayList<>();
+        List<DepreciationHistory> depreciationHistories = depreciationHistoryService.findByDepreciation(depreciation);
+        for(DepreciationHistory depreciationHistory : depreciationHistories){
+            DepreciationHistoryByDepreciation depreciationHistoryByDepreciation  = list.stream()
+                    .filter(o -> o.getYear() == depreciationHistory.getYear())
+                    .findFirst()
+                    .orElse(null);
+            if(depreciationHistoryByDepreciation == null){
+                depreciationHistoryByDepreciation = new DepreciationHistoryByDepreciation();
+                depreciationHistoryByDepreciation.setYear(depreciationHistory.getYear());
+                Map<String,Double> months = new HashMap<>();
+                months.put(String.valueOf(depreciationHistory.getMonth()),depreciationHistory.getValue());
+                depreciationHistoryByDepreciation.setMonths(months);
+                list.add(depreciationHistoryByDepreciation);
+            }else{
+                Map<String,Double> months = depreciationHistoryByDepreciation.getMonths();
+                months.put(String.valueOf(depreciationHistory.getMonth()),depreciationHistory.getValue());
+                depreciationHistoryByDepreciation.setMonths(months);
+            }
+        }
+        return list;
     }
 
 }

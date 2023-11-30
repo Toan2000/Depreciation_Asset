@@ -3,12 +3,10 @@ package com.example.assetService.mapping;
 import com.example.assetService.client.AssetServiceClient;
 import com.example.assetService.dto.request.AssetRequest;
 import com.example.assetService.dto.request.DepreciationRequest;
+import com.example.assetService.dto.response.AssetDeliveryResponse;
 import com.example.assetService.dto.response.AssetResponse;
 import com.example.assetService.dto.response.UserResponse;
-import com.example.assetService.model.Asset;
-import com.example.assetService.model.AssetType;
-import com.example.assetService.model.Brand;
-import com.example.assetService.model.Storage;
+import com.example.assetService.model.*;
 import com.example.assetService.repository.AccessaryRepository;
 import com.example.assetService.repository.AssetTypeRepository;
 import com.example.assetService.service.*;
@@ -23,7 +21,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -34,6 +34,7 @@ public class AssetMapping {
     private final BrandService brandService;
     private final StorageService storageService;
     private final AccesaryService accesaryService;
+    private final AssetDeliveryService assetDeliveryService;
     public AssetResponse getAssetResponse(Asset asset) {
         AssetResponse assetResponse = new AssetResponse();
         assetResponse.setAssetId(asset.getAssetId());
@@ -126,5 +127,63 @@ public class AssetMapping {
     //Công thức tính khấu hao 3
     public Double depreciation3(Double price, Double valueUsed,int amountMonth){
         return price - valueUsed - (amountMonth-1)*((price-valueUsed)/amountMonth);
+    }
+
+    public AssetDeliveryResponse getAssetDeliveryResponse(Asset asset){
+        AssetDeliveryResponse assetDeliveryResponse = new AssetDeliveryResponse();
+        assetDeliveryResponse.setStorageId(asset.getStorageId());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Storage storage = storageService.findById(asset.getStorageId());
+        assetDeliveryResponse.setStorageName(storage.getStorageName());
+        assetDeliveryResponse.setStorageLocation(storage.getLocation());
+        assetDeliveryResponse.setUserResponse(assetServiceClient.fetchUser(asset.getUserUsedId()));
+        assetDeliveryResponse.setDateUsed(dateFormat.format(asset.getDateUsed()));
+        assetDeliveryResponse.setDateInStored(dateFormat.format(asset.getDateInStored()));
+        List<AssetDeliveryResponse.DeliveryHistory> listDelivery = new ArrayList<>();
+        List<AssetDeliveryResponse.DeliveryHistory> listRecall = new ArrayList<>();
+        List<AssetDeliveryResponse.DeliveryHistory> listBroken = new ArrayList<>();
+        //status == 0 => Lấy thông tin những cấp phát
+        List<AssetDelivery> assetDeliveries = assetDeliveryService.findByAssetIdAndDeliveryType(asset.getAssetId(), 0);
+        //status == 1 => Lấy lịch sử thu hồi
+        List<AssetDelivery> assetRecalls = assetDeliveryService.findByAssetIdAndDeliveryType(asset.getAssetId(), 1);
+        //status == 2 => Lấy lịch sử mất
+        List<AssetDelivery> assetBroken = assetDeliveryService.findByAssetIdAndDeliveryType(asset.getAssetId(), 2);
+        for(AssetDelivery assetDelivery : assetDeliveries){
+            AssetDeliveryResponse.DeliveryHistory deliveryHistory = new AssetDeliveryResponse.DeliveryHistory();
+            deliveryHistory.setDeliveryDate(dateFormat.format(assetDelivery.getCreateAt()));
+            deliveryHistory.setNote(assetDelivery.getNote());
+            UserResponse userResponse = assetServiceClient.fetchUser(assetDelivery.getUserId());
+            deliveryHistory.setUserResponse(userResponse);
+            deliveryHistory.setDeliveryType("Cấp phát");
+            deliveryHistory.setStatus(assetDelivery.getStatus());
+            deliveryHistory.setNote(assetDelivery.getNote());
+            listDelivery.add(deliveryHistory);
+        }
+        for(AssetDelivery assetDelivery : assetRecalls){
+            AssetDeliveryResponse.DeliveryHistory recallHistory = new AssetDeliveryResponse.DeliveryHistory();
+            recallHistory.setDeliveryDate(dateFormat.format(assetDelivery.getCreateAt()));
+            recallHistory.setNote(assetDelivery.getNote());
+            UserResponse userResponse = assetServiceClient.fetchUser(assetDelivery.getUserId());
+            recallHistory.setUserResponse(userResponse);
+            recallHistory.setDeliveryType("Thu hồi");
+            recallHistory.setStatus(assetDelivery.getStatus());
+            recallHistory.setNote(assetDelivery.getNote());
+            listRecall.add(recallHistory);
+        }
+        for(AssetDelivery assetDelivery : assetBroken){
+            AssetDeliveryResponse.DeliveryHistory brokenHistory = new AssetDeliveryResponse.DeliveryHistory();
+            brokenHistory.setDeliveryDate(dateFormat.format(assetDelivery.getCreateAt()));
+            brokenHistory.setNote(assetDelivery.getNote());
+            UserResponse userResponse = assetServiceClient.fetchUser(assetDelivery.getUserId());
+            brokenHistory.setUserResponse(userResponse);
+            brokenHistory.setDeliveryType("Cấp phát");
+            brokenHistory.setStatus(assetDelivery.getStatus());
+            brokenHistory.setNote(assetDelivery.getNote());
+            listBroken.add(brokenHistory);
+        }
+        assetDeliveryResponse.setDeliveryHistories(listDelivery);
+        assetDeliveryResponse.setRecallHistories(listRecall);
+        assetDeliveryResponse.setBrokenHistories(listBroken);
+        return assetDeliveryResponse;
     }
 }

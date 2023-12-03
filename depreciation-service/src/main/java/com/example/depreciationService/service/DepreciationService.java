@@ -14,6 +14,7 @@ import java.util.List;
 public interface DepreciationService {
 
     List<Depreciation> findByAssetId(Long assetId);
+    Depreciation findByAssetIdAndToDate(Long assetId, Date date);
 
     boolean saveDepreciation(Depreciation depreciation);
 
@@ -22,5 +23,6 @@ public interface DepreciationService {
     Depreciation findDepreciationToUpdate(Long assetId);
      List<Depreciation> getAllDepreciationNoToDate();
     List<Depreciation> getDepreciationByFromDateAndToDate(Date fromDate, Date toDate);
+    Object findLDateAndSumValueByAssetId(Long assetId);
     Depreciation findById(Long id);
 }

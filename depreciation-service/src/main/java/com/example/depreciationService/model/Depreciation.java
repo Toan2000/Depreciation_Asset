@@ -37,6 +37,8 @@ public class Depreciation {
     private int amountMonth;
     @Column(name = "value_depreciation")
     private Double valueDepreciation;
+    @Column(name="value_per_month")
+    private Double valuePerMonth;
     @Column(name = "create_at")
     private Date createAt;
     @Column(name = "active")

@@ -19,4 +19,6 @@ public class AssetServiceClient {
     public void addDepreciation(DepreciationRequest depreciationRequest) {
         template.postForEntity("http://DEPRECIATION-SERVICE/api/depreciation/create", depreciationRequest,String.class);
     }
-}
+    public Boolean recallAsset(Long assetId) {
+        return template.getForObject("http://DEPRECIATION-SERVICE/api/depreciation/recall/" + assetId,Boolean.class);
+    }}

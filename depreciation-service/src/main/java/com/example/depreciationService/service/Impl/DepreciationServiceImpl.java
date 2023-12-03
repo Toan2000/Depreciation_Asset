@@ -27,6 +27,12 @@ public class DepreciationServiceImpl implements DepreciationService {
     public List<Depreciation> findByAssetId(Long assetId) {
         return depreciationRepository.findByAssetId(assetId);
     }
+
+    @Override
+    public Depreciation findByAssetIdAndToDate(Long assetId, Date date) {
+        return depreciationRepository.findByAssetIdAndToDate(assetId,date);
+    }
+
     @Override
     public boolean saveDepreciation(Depreciation depreciation ){
         Depreciation temp = depreciationRepository.save(depreciation);
@@ -55,6 +61,11 @@ public class DepreciationServiceImpl implements DepreciationService {
     @Override
     public List<Depreciation> getDepreciationByFromDateAndToDate(Date fromDate, Date toDate) {
         return depreciationRepository.getDepreciationByFromDateAndToDate(fromDate,toDate);
+    }
+
+    @Override
+    public Object findLDateAndSumValueByAssetId(Long assetId) {
+        return depreciationRepository.findLastDepreciationByAssetId(assetId);
     }
 
     @Override

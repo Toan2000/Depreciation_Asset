@@ -19,15 +19,15 @@ import java.util.List;
 
 @Component
 @AllArgsConstructor
-@Lazy(false)
 public class DepreciationHistoryTask {
     private final DepreciationService depreciationService;
     private final DepreciationHistoryService depreciationHistoryService;
-    private final DepreciationServiceClient depreciationServiceClient;
-    @Scheduled(cron = "00 00 00 L * ?")
+
+    //Hàm tính lịch sử khấu hao được khởi tạo và chạy vào mỗi đầu tháng
+    @Scheduled(cron = "00 00 00 1 * ?")
     public void calculateDepreciationPerMonth() throws ParseException {
-        LocalDate today =LocalDate.now();
         //Khởi tạo ngày đầu tháng và cuối tháng
+        LocalDate today = LocalDate.now().minusDays(1);
         Date fromDate = new SimpleDateFormat("yyyy-MM-dd").parse(today.getYear()+"-"+today.getMonthValue()+"-01");
         Date toDate = new SimpleDateFormat("yyyy-MM-dd").parse(today.getYear()+"-"+today.getMonthValue()+"-"+today.lengthOfMonth());
         //Tìm danh sách các khấu hao còn đang chạy và các khấu hao được tạo trong tháng
@@ -39,12 +39,15 @@ public class DepreciationHistoryTask {
             depreciationHistory.setYear(today.getYear());
             depreciationHistory.setDepreciation(depreciation);
             depreciationHistory.setAssetId(depreciation.getAssetId());
-            depreciationHistory.setAssetId(depreciation.getAssetTypeId());
+            depreciationHistory.setAssetTypeId(depreciation.getAssetTypeId());
+            //Tính giá trị khấu hao
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             if(depreciation.getFromDate().before(fromDate))
-                depreciationHistory.setValue(depreciationServiceClient.getDepreciationValue(depreciation.getAssetId(), dateFormat.format(fromDate),dateFormat.format(toDate)));
+                //Tính khấu hao đầy đủ theo một tháng
+                depreciationHistory.setValue(depreciation.getValuePerMonth());
             else
-                depreciationHistory.setValue(depreciationServiceClient.getDepreciationValue(depreciation.getAssetId(), dateFormat.format(depreciation.getFromDate()),dateFormat.format(toDate)));
+                //Nếu số ngày trong tháng lẻ thì tính theo thời gian
+                depreciationHistory.setValue(((toDate.getDate()-depreciation.getFromDate().getDate()+1)/today.lengthOfMonth())*depreciation.getValuePerMonth());
             depreciationHistoryService.saveDepreciationHistory(depreciationHistory);
         }
     }

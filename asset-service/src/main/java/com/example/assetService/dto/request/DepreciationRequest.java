@@ -13,5 +13,4 @@ public class DepreciationRequest {
     private Long assetId;
     private Long userId;
     private Long deptId;
-    private Double valuePerDay;
 }

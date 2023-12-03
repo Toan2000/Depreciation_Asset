@@ -32,13 +32,13 @@ public class DepreciationController {
     private final DepreciationHistoryMapping depreciationHistoryMapping;
     //Tạo thông tin khấu hao
     @PostMapping("/create")
-    public ResponseEntity saveDepreciation(@RequestBody DepreciationRequest depreciationRequest){
-        for(Depreciation depreciation : depreciationService.findByAssetId(depreciationRequest.getAssetId())){
-            if(depreciation.getToDate()==null)
-                return new ResponseEntity(new String("Thông tin khấu hao đã tồn tại"), HttpStatus.NOT_ACCEPTABLE);
-        }
-        Depreciation depreciation = depreciationMapping.requestToEntity(depreciationRequest);
-        if(depreciationService.saveDepreciation(depreciation))
+    public ResponseEntity saveDepreciation(@RequestBody DepreciationRequest depreciationRequest) throws ParseException {
+        Depreciation depreciation = depreciationService.findByAssetIdAndToDate(depreciationRequest.getAssetId(), null);
+        if(depreciation!=null)
+            return new ResponseEntity(new String("Thông tin khấu hao đã tồn tại"), HttpStatus.NOT_ACCEPTABLE);
+        Object object = depreciationService.findLDateAndSumValueByAssetId(depreciationRequest.getAssetId());
+        Depreciation depreciationRecords = depreciationMapping.requestToEntity(depreciationRequest, object);
+        if(depreciationService.saveDepreciation(depreciationRecords))
             return new ResponseEntity(new String("Thông tin khấu hao đã được tạo"), HttpStatus.CREATED);
         return new ResponseEntity(new String("Thông tin khấu hao chưa được tạo"),HttpStatus.NOT_ACCEPTABLE);
     }
@@ -50,9 +50,9 @@ public class DepreciationController {
         depreciation = depreciationMapping.updateDepreciation(depreciation);
         if(depreciationService.saveDepreciation(depreciation)){
             depreciationHistoryService.saveDepreciationHistory(depreciationHistoryMapping.getHistory(depreciation));
-            return new ResponseEntity(new String("Lưu thông tin khấu hao thành công"), HttpStatus.CREATED);
+            return new ResponseEntity(true, HttpStatus.CREATED);
         }
-        return new ResponseEntity(new String("Lưu thông tin khấu hao thất bại"),HttpStatus.NOT_ACCEPTABLE);
+        return new ResponseEntity(false,HttpStatus.NOT_ACCEPTABLE);
     }
     //Tìm thông tin records Depreciation trong DB
     @GetMapping("")
@@ -148,9 +148,15 @@ public class DepreciationController {
 //        Depreciation depreciation = depreciationService.findById(id);
 //        return new ResponseEntity(depreciationHistoryMapping.getDepreciationHistoryByDepreciation(depreciation),HttpStatus.OK);
 //    }
+    //Đếm các giá trị khấu hao đến hiện tại
     @GetMapping("/count")
     public ResponseEntity countDepreciationValue(){
         return new ResponseEntity(depreciationHistoryService.totalValueDepreciation(),HttpStatus.OK);
+    }
+
+    @GetMapping("/test12")
+    public ResponseEntity countDe(){
+        return new ResponseEntity(depreciationHistoryService.getTotalValueByDeptIdAndAssetType(Long.valueOf(2),Long.valueOf(2)),HttpStatus.OK);
     }
 
 }

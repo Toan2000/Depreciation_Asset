@@ -5,6 +5,7 @@ import com.example.assetService.dto.request.AssetRequest;
 import com.example.assetService.dto.request.DepreciationRequest;
 import com.example.assetService.dto.response.AssetDeliveryResponse;
 import com.example.assetService.dto.response.AssetResponse;
+import com.example.assetService.dto.response.AssetUpdateHistoryResponse;
 import com.example.assetService.dto.response.UserResponse;
 import com.example.assetService.model.*;
 import com.example.assetService.repository.AccessaryRepository;
@@ -85,7 +86,9 @@ public class AssetMapping {
         asset.setSerialNumber(assetRequest.getSerial());
         return asset;
     }
+    //Thay đổi thông tin người sử dụng tài sản
     public Asset updateAsset(Asset asset, Long userId){
+        // Lấy thông tin người dùng
         UserResponse userResponse = assetServiceClient.fetchUser(Long.valueOf(userId));
         if(userResponse == null)
             return null;
@@ -93,7 +96,24 @@ public class AssetMapping {
         asset.setDateUsed(new Date());
         asset.setUserUsedId(userId);
         asset.setDeptUsedId(Long.valueOf(userResponse.getDept().getId()));
+        DepreciationRequest depreciationRequest = new DepreciationRequest();
+        depreciationRequest.setAssetId(asset.getAssetId());
+        depreciationRequest.setDeptId(Long.valueOf(userResponse.getDept().getId()));
+        depreciationRequest.setUserId(userId);
+        //Tạo thông tin khấu hao
+        assetServiceClient.addDepreciation(depreciationRequest);
         return asset;
+    }
+    //Thu hồi tài sản
+    public Asset recallAsset(Asset asset){
+        asset.setAssetStatus(Long.valueOf(0));
+        asset.setDateUsed(null);
+        asset.setUserUsedId(null);
+        asset.setDeptUsedId(null);
+        //Nếu dừng khấu hao thành công thì trả về aset đã xóa người dùng
+        if(assetServiceClient.recallAsset(asset.getAssetId()))
+            return asset;
+        return null;
     }
     public Double calculatorDepreciation(Asset asset, String fromDate, String toDate, Double value, String lastDate) throws ParseException {
         //Lấy thông tin tài sản và thời gian
@@ -114,6 +134,24 @@ public class AssetMapping {
             return depreciation2(asset.getPrice(),value,Long.valueOf(amountMonth),tDate.getDate()-fDate.getDate()+1,daysInMonth);
         }
         return depreciation1(asset.getPrice(), asset.getTime(),tDate.getDate()-fDate.getDate()+1,daysInMonth);
+    }
+    public Double calculatorDepreciationPerMonth(Asset asset, Double value, String lastDate) throws ParseException {
+        //Lấy thông tin tài sản và thời gian
+        Date lDate = new SimpleDateFormat("yyyy-MM-dd").parse(lastDate);
+        //Tính số ngày trong tháng
+        int daysInMonthLDate = LocalDate.from(lDate.toInstant().atZone(ZoneId.systemDefault())).lengthOfMonth();
+        int daysInMonthEDate = LocalDate.from(asset.getDateExperience().toInstant().atZone(ZoneId.systemDefault())).lengthOfMonth();
+        //Tính số tháng còn lại
+        int amountMonth = (lDate.getDate() >= daysInMonthLDate/2 ? 0 : 1)
+                + (11 - lDate.getMonth())
+                + (asset.getDateExperience().getYear() - lDate.getYear() -1)*12
+                + (asset.getDateExperience().getMonth())
+                + (asset.getDateExperience().getDate() > daysInMonthEDate/2 ? 1: 0);
+        //Kiểm tra tài sản có nâng cấp hay không
+        if(asset.getUpdateId()!=null){
+            return (asset.getPrice() - value)/amountMonth;
+        }
+        return asset.getPrice()/asset.getTime();
     }
     //Công thức tính khấu hao 1
     public Double depreciation1(Double price, Long amountMonth, int days, int amountDay) {
@@ -185,5 +223,50 @@ public class AssetMapping {
         assetDeliveryResponse.setRecallHistories(listRecall);
         assetDeliveryResponse.setBrokenHistories(listBroken);
         return assetDeliveryResponse;
+    }
+
+    public AssetUpdateHistoryResponse getAssetUpdateHistoryResponse(Asset asset,List<UpdateHistory> histories) throws ParseException {
+        AssetUpdateHistoryResponse assetUpdateHistoryResponse = new AssetUpdateHistoryResponse();
+        assetUpdateHistoryResponse.setAssetId(asset.getAssetId());
+        assetUpdateHistoryResponse.setAssetName(asset.getAssetName());
+        assetUpdateHistoryResponse.setTotalValueUpdate(0.0);
+        assetUpdateHistoryResponse.setPricePre(asset.getPrice());
+        assetUpdateHistoryResponse.setTimePre(asset.getTime());
+        List<AssetUpdateHistoryResponse.UpdateHistoryResponse> list = new ArrayList<>();
+        //Tạo 2 ngày mới nhất và cũ nhất
+        Date dateOld = new Date();
+        Date dateNew = asset.getDateUsed();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        for(UpdateHistory updateHistory : histories){
+            //Tính total Theo từng lịch sử
+            assetUpdateHistoryResponse.setTotalValueUpdate(assetUpdateHistoryResponse.getTotalValueUpdate()+updateHistory.getValue());
+            //Kiểm tra có phải ngày mới nhất chưa
+            if(dateNew.before(updateHistory.getDateUpdate())) {
+                dateNew = updateHistory.getDateUpdate();
+                assetUpdateHistoryResponse.setNote(updateHistory.getNote());
+            }
+            //Kiểm tra có phải ngày cũ nhất chưa
+            if(dateOld.after(updateHistory.getDateUpdate())){
+                dateNew = updateHistory.getDateUpdate();
+                assetUpdateHistoryResponse.setTimePrev(Long.valueOf(updateHistory.getAmountMonthPrev()));
+                assetUpdateHistoryResponse.setPricePrev(updateHistory.getValuePrev());
+            }
+            UserResponse userUsed = assetServiceClient.fetchUser(updateHistory.getUserUsedId());
+            UserResponse userUpdate = assetServiceClient.fetchUser(updateHistory.getUserUpdateId());
+            AssetUpdateHistoryResponse.UpdateHistoryResponse response = new AssetUpdateHistoryResponse.UpdateHistoryResponse(
+                    updateHistory.getId(),
+                    userUpdate,
+                    userUsed,
+                    dateFormat.format(updateHistory.getCreateAt()),
+                    dateFormat.format(updateHistory.getDateUpdate()),
+                    updateHistory.getValue(),updateHistory.getValuePrev(),
+                    updateHistory.getAmountMonthPresent()-updateHistory.getAmountMonthPrev(),
+                    updateHistory.getNote(),
+                    updateHistory.getStatus());
+            list.add(response);
+        }
+        assetUpdateHistoryResponse.setDateUpdateNearest(dateFormat.format(dateNew));
+        assetUpdateHistoryResponse.setUpdateHistoryResponses(list);
+        return assetUpdateHistoryResponse;
     }
 }

@@ -68,10 +68,13 @@ public class DepreciationHistoryServiceImpl implements DepreciationHistoryServic
     public List<Object> getDepreciationByAllDeptInYear(int year, Long deptId) {
         return depreciationHistoryRepository.getDepreciationByAllDeptInYear(year, deptId);
     }
-
     @Override
     public Double totalValueDepreciation(){
         return depreciationHistoryRepository.totalValueDepreciation();
+    }
+    @Override
+    public Double getTotalValueByDeptIdAndAssetType(Long deptId, Long assetTypeId){
+        return depreciationHistoryRepository.getTotalValueByDeptIdAndAssetType(deptId,assetTypeId,2023);
     }
 
 }

@@ -104,7 +104,7 @@ public class DepreciationHistoryMapping {
         assetDepreciationResponse.setAssetName(assetResponse.getAssetName());
         return assetDepreciationResponse;
     }
-    //Thông tin khấu hao theo phòng ban
+    //Tất cả thông tin khấu hao theo phòng ban
     public List<DepreciationDeptResponse> getDepreciationDeptResponse(List<Object> data){
         List<DepreciationDeptResponse> depreciationDeptResponses = new ArrayList<>();
         for(Object o : data){

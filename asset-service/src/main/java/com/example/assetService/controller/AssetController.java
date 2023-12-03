@@ -8,8 +8,10 @@ import com.example.assetService.dto.response.Response;
 import com.example.assetService.mapping.AssetMapping;
 import com.example.assetService.model.Asset;
 import com.example.assetService.model.AssetType;
+import com.example.assetService.model.UpdateHistory;
 import com.example.assetService.service.AssetService;
 import com.example.assetService.service.AssetTypeService;
+import com.example.assetService.service.UpdateHistoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -36,6 +38,7 @@ public class AssetController {
     private final AssetMapping assetMapping;
     private final AssetTypeService assetTypeService;
     private final AssetServiceClient assetServiceClient;
+    private final UpdateHistoryService updateHistoryService;
     @GetMapping("")
     public ResponseEntity<Response> getAllAsset(@RequestParam(defaultValue = "0") int page,
                                                 @RequestParam(defaultValue = "10") int size,
@@ -58,14 +61,6 @@ public class AssetController {
     public ResponseEntity getAssetByIdv1(@PathVariable Long id){
         return new ResponseEntity(assetMapping.getAssetResponse(assetService.findAssetById(id)),HttpStatus.OK);
     }
-
-
-//    API create Depreciation
-//    @PostMapping("/v1")
-//    public ResponseEntity postDepreciation(@RequestBody DepreciationRequest depreciationRequest){
-//        assetServiceClient.addDepreciation(depreciationRequest);
-//        return new ResponseEntity(HttpStatus.OK);
-//    }
     @GetMapping("/type")
     public ResponseEntity getAllAssetType(){
         return new ResponseEntity(assetTypeService.getAllAsset(), HttpStatus.OK);
@@ -74,7 +69,6 @@ public class AssetController {
     public ResponseEntity getAllAssetTypeById(@PathVariable Long id){
         return new ResponseEntity(assetTypeService.findAssetTypeById(id), HttpStatus.OK);
     }
-
     @GetMapping("/dept/{id}")
     public ResponseEntity<Response> getAssetByDeptId(@PathVariable Long id,
                                                      @RequestParam(defaultValue = "0") int page,
@@ -154,6 +148,7 @@ public class AssetController {
         data.put("totalPage",assets.getTotalPages());
         return new ResponseEntity<>(new Response("Danh sách tài sản",data),HttpStatus.OK);
     }
+    //Bộ lọc tài sản
     @GetMapping("/filter")
     public ResponseEntity<Response> filterAssets(@RequestParam(defaultValue = "NAMENULL") String name,
                                                  @RequestParam(defaultValue = "-1") Long dept,
@@ -176,6 +171,7 @@ public class AssetController {
         data.put("totalPage",assets.getTotalPages());
         return new ResponseEntity<>(new Response("Danh sách tài sản",data),HttpStatus.OK);
     }
+    //Thực hiện tạo thông tin tài sản thông qua file Excel
     @PostMapping("/upload-assets-data")
     public ResponseEntity<?> uploadAssetsData(@RequestParam("file") MultipartFile file){
         assetService.saveAssetsToDatabase(file);
@@ -192,10 +188,20 @@ public class AssetController {
     public ResponseEntity<Response> addUserUsed(@PathVariable Long id,@RequestParam Long userId){
         Asset asset = assetService.findAssetById(id);
         if(asset == null) return new ResponseEntity<>(new Response("Không tìm thấy tài sản",null),HttpStatus.NOT_FOUND);
+        if(asset.getUserUsedId() != null) return new ResponseEntity<>(new Response("Tài sản đang được sử dụng",null),HttpStatus.NOT_FOUND);
         asset = assetMapping.updateAsset(asset,userId);
-        if(asset == null) return new ResponseEntity<>(new Response("Không tìm thấy người dùng",null),HttpStatus.NOT_FOUND);
+        if(asset == null) return new ResponseEntity<>(new Response("Bàn giao tài sản thất bại",null),HttpStatus.NOT_FOUND);
         assetService.createAsset(asset);
-
+        return new ResponseEntity<>(new Response("Cập nhật thông tin thành công",null),HttpStatus.OK);
+    }
+    @PutMapping("/recall/{id}")
+    public ResponseEntity<Response> recallAsset(@PathVariable Long id){
+        Asset asset = assetService.findAssetById(id);
+        if(asset == null) return new ResponseEntity<>(new Response("Không tìm thấy tài sản",null),HttpStatus.NOT_FOUND);
+        if(asset.getUserUsedId() != null) return new ResponseEntity<>(new Response("Tài sản chưa được đưa vào sử dụng",null),HttpStatus.NOT_FOUND);
+        asset = assetMapping.recallAsset(asset);
+        if(asset == null) return new ResponseEntity<>(new Response("Thu hồi tài sản thất bại",null),HttpStatus.NOT_FOUND);
+        assetService.createAsset(asset);
         return new ResponseEntity<>(new Response("Cập nhật thông tin thành công",null),HttpStatus.OK);
     }
 
@@ -227,14 +233,21 @@ public class AssetController {
 
 
 
-    //Hàm tính khấu hao theo tháng
+    //Hàm tính khấu hao theo hai ngày trong 1 tháng
     @GetMapping("/depreciation/test/{id}")
-    public ResponseEntity getDepreciationPerMonthTest(@PathVariable Long id,
-                                                      @RequestParam String fromDate,
-                                                      @RequestParam String toDate,
-                                                      @RequestParam Double value,
-                                                      @RequestParam String lastDate) throws ParseException {
+    public ResponseEntity getDepreciationPerDate(@PathVariable Long id,
+                                                 @RequestParam String fromDate,
+                                                 @RequestParam String toDate,
+                                                 @RequestParam Double value,
+                                                 @RequestParam String lastDate) throws ParseException {
         return new ResponseEntity(assetMapping.calculatorDepreciation(assetService.findAssetById(id),fromDate,toDate,value,lastDate),HttpStatus.OK);
+    }
+    //Hàm tính khấu hao theo tháng
+    @GetMapping("/depreciation/month/{id}")
+    public ResponseEntity getDepreciationPerMonth(@PathVariable Long id,
+                                                  @RequestParam Double value,
+                                                  @RequestParam String lastDate) throws ParseException {
+        return new ResponseEntity(assetMapping.calculatorDepreciationPerMonth(assetService.findAssetById(id),value,lastDate),HttpStatus.OK);
     }
     @GetMapping("/count")
     public ResponseEntity getCountAsset(){
@@ -244,5 +257,17 @@ public class AssetController {
     @GetMapping("/delivery/{id}")
     public ResponseEntity getAssetDelivery(@PathVariable Long id){
         return new ResponseEntity(assetMapping.getAssetDeliveryResponse(assetService.findAssetById(id)),HttpStatus.OK);
+    }
+    @GetMapping("/update/{id}")
+    public ResponseEntity getAllUpdateHistory(@PathVariable Long id) throws ParseException {
+        Asset asset = assetService.findAssetById(id);
+        List<UpdateHistory> histories = updateHistoryService.getListUpdateHistoryByAssetId(id);
+        return new ResponseEntity(assetMapping.getAssetUpdateHistoryResponse(asset,histories),HttpStatus.OK);
+    }
+    @GetMapping("/reduce/{id}")
+    public ResponseEntity getAllReduceHistory(@PathVariable Long id) throws ParseException {
+        Asset asset = assetService.findAssetById(id);
+        List<UpdateHistory> histories = updateHistoryService.getListReduceHistoryByAssetId(id);
+        return new ResponseEntity(assetMapping.getAssetUpdateHistoryResponse(asset,histories),HttpStatus.OK);
     }
 }

@@ -18,6 +18,7 @@ public class AssetResponse {
     private int assetGroupId;
     private String assetGroup;
     private Long status;
+    private Long updateId;
     private String statusName;
     private Double price;
     private String dateUsed;

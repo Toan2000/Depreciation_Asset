@@ -32,5 +32,8 @@ public class DepreciationServiceClient {
     public AssetTypeResponse fetchAssetType(Long typeId) {
         return template.getForObject("http://ASSET-SERVICE/api/asset/type/" + typeId, AssetTypeResponse.class);
     }
+    public Double fetchValuePerMonth(Long assetId, String lDate, Double value) {
+        return template.getForObject("http://ASSET-SERVICE/api/asset/depreciation/month/" + assetId +"?lastDate="+lDate+"&value="+value, Double.class);
+    }
 
 }

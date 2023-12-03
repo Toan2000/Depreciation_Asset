@@ -34,5 +34,6 @@ public class AssetResponse {
     private String dateInStored;
     private String serial;
     private String expDate;
+    private Double valuePerMonth;
     private List<Accessary> accessaries;
 }

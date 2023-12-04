@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Data
@@ -12,9 +13,7 @@ import java.util.Map;
 public class AssetType {
     private Long typeId;
     private String typeName;
-    private Double price;
-    private Double valuePerMonth;
-    private Double valuePrev;
-    private Double valuePresent;
-    private Map<String,Double> months;
+    private Double totalPrice =0.0;
+    private Double depreciationPrev= 0.0;
+    private Map<String,Double> months = new HashMap<>();
 }

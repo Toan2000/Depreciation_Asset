@@ -14,6 +14,9 @@ import java.util.List;
 public interface DepreciationService {
 
     List<Depreciation> findByAssetId(Long assetId);
+
+    List<Depreciation> findByAssetIdOrderByIdAsc(Long assetId);
+
     Depreciation findByAssetIdAndToDate(Long assetId, Date date);
 
     boolean saveDepreciation(Depreciation depreciation);

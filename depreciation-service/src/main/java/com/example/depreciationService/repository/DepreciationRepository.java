@@ -10,6 +10,7 @@ import java.util.Optional;
 
 public interface DepreciationRepository extends JpaRepository<Depreciation,Long> {
     List<Depreciation> findByAssetId(Long assetId);
+    List<Depreciation> findByAssetIdOrderByIdAsc(Long assetId);
     @Query(value = "SELECT * FROM public.depreciation WHERE public.depreciation.to_date IS NULL AND asset_id=?1",
             countQuery = "SELECT * FROM public.depreciation WHERE public.depreciation.to_date IS NULL AND asset_id=?1",
             nativeQuery = true)

@@ -1,9 +1,6 @@
 package com.example.depreciationService.client;
 
-import com.example.depreciationService.dto.response.AssetResponse;
-import com.example.depreciationService.dto.response.AssetTypeResponse;
-import com.example.depreciationService.dto.response.DepartmentResponse;
-import com.example.depreciationService.dto.response.UserResponse;
+import com.example.depreciationService.dto.response.*;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

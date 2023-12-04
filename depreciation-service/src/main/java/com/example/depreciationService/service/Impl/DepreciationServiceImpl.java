@@ -8,11 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +24,10 @@ public class DepreciationServiceImpl implements DepreciationService {
     @Override
     public List<Depreciation> findByAssetId(Long assetId) {
         return depreciationRepository.findByAssetId(assetId);
+    }
+    @Override
+    public List<Depreciation> findByAssetIdOrderByIdAsc(Long assetId) {
+        return depreciationRepository.findByAssetIdOrderByIdAsc(assetId);
     }
 
     @Override

@@ -123,7 +123,7 @@ public class DepreciationMapping {
             UserResponse userResponse = depreciationServiceClient.fetchUser(depreciation.getUserId());
             Double value = 0.0;
             Date toDate = depreciation.getToDate();
-            if(toDate == null){
+            if(depreciation.getToDate() == null){
                 toDate = new Date();
                 Object object = depreciationHistoryService.getValueHistoryByDepreciation(toDate.getMonth()+1,toDate.getYear()+1900, depreciation.getId());
                 value += object != null ? Double.valueOf(((Object[])object)[1].toString()): 0.0;

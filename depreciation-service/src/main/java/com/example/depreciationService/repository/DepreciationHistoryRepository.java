@@ -38,11 +38,11 @@ public interface DepreciationHistoryRepository extends JpaRepository<Depreciatio
             "(SELECT dept_id, depreciation.asset_id, SUM(value) as value_prev FROM depreciation, depreciation_history WHERE depreciation.id = depreciation_history.depreciation_id AND ((month < ?1 AND year = ?2) OR (year < ?2)) GROUP BY dept_id, depreciation.asset_id) as B\n" +
             "where A.asset_id = B.asset_id",nativeQuery = true)
     List<Object> getDepreciationByAllDept(int month, int year);
-    @Query(value = "SELECT dept_id, A.asset_id, value_present, value_prev\n" +
-            "FROM (SELECT asset_id, value as value_present FROM depreciation_history WHERE month = ?1 AND year = ?2) as A, \n" +
-            "(SELECT dept_id, depreciation.asset_id, SUM(value) as value_prev FROM depreciation, depreciation_history WHERE depreciation.id = depreciation_history.depreciation_id AND ((month < ?1 AND year = ?2) OR (year < ?2)) GROUP BY dept_id, depreciation.asset_id) as B\n" +
-            "where A.asset_id = B.asset_id",nativeQuery = true)
-    List<Object> getDepreciationByAllDeptTest(int month, int year);
+    @Query(value = "SELECT dept_id, depreciation_history.asset_type_id, month, year, sum(value) as value \n" +
+            "FROM depreciation_history, depreciation\n" +
+            "WHERE year = ?1 AND depreciation_history.depreciation_id = depreciation.id\n" +
+            "GROUP BY dept_id, depreciation_history.asset_type_id, month, year",nativeQuery = true)
+    List<Object> getDepreciationByAllDeptTest(int year);
     @Query(value = "SELECT dept_id, depreciation_history.asset_type_id, month, SUM(value)\n" +
             "FROM depreciation, depreciation_history\n" +
             "WHERE depreciation.id = depreciation_history.depreciation_id AND year = ?1 AND dept_id = ?2\n" +

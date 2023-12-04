@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 public class DepreciationMapping {
     private final DepreciationServiceClient depreciationServiceClient;
     private final DepreciationHistoryService depreciationHistoryService;
+    private final CommonMapping commonMapping;
 
     //Hàm nhận request và thực hiện tính khấu hao và lưu lịch sử
     public Depreciation requestToEntity(DepreciationRequest depreciationRequest, Object object) throws ParseException {
@@ -34,10 +35,11 @@ public class DepreciationMapping {
         AssetResponse assetResponse = depreciationServiceClient.fetchAsset(depreciation.getAssetId());
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         depreciation.setAssetTypeId(assetResponse.getAssetTypeId());
+        depreciation.setExpDate(dateFormat.parse(assetResponse.getExpDate()));
         //Ngưng khấu hao đợt trước và gán khấu hao từ sau ngày kết thúc
         if(object != null){
             Date lDate = dateFormat.parse(((Object[])object)[1].toString());
-            depreciation.setValuePerMonth(calculatorDepreciationPerMonth(assetResponse,Double.valueOf(((Object[])object)[2].toString()), dateFormat.format(lDate)));
+            depreciation.setValuePerMonth(commonMapping.calculatorDepreciationPerMonth(assetResponse,Double.valueOf(((Object[])object)[2].toString()), dateFormat.format(lDate)));
             LocalDate localDate = lDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().plusDays(1);
             depreciation.setFromDate(Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
             //Kiểm tra lịch sử khấu hao đã qua tháng mới chưa
@@ -78,28 +80,29 @@ public class DepreciationMapping {
         return depreciation;
     }
 
-    public DepreciationResponse EntityToResponse(Depreciation depreciation){
-        DepreciationResponse depreciationResponse = new DepreciationResponse();
-        AssetResponse assetResponse = depreciationServiceClient.fetchAsset(depreciation.getAssetId());
-        depreciationResponse.setAssetResponse(assetResponse);
-        depreciationResponse.setId(depreciation.getId());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        depreciationResponse.setFromDate(dateFormat.format(depreciation.getFromDate()));
-        if(depreciation.getToDate()==null){
-            depreciationResponse.setToDate(null);
-            depreciationResponse.setAmountMonth(new Date().getMonth() - depreciation.getFromDate().getMonth());
-            depreciationResponse.setValueDepreciation(depreciationServiceClient.getDepreciationValue(depreciation.getAssetId(),dateFormat.format(depreciation.getFromDate()) ,dateFormat.format(new Date())));
-        }
-        else{
-            depreciationResponse.setToDate(dateFormat.format(depreciation.getToDate()));
-            depreciationResponse.setAmountMonth(depreciation.getToDate().getMonth() - depreciation.getFromDate().getMonth());
-            depreciationResponse.setValueDepreciation(depreciation.getValueDepreciation());
-        }
-        depreciationResponse.setCreateAt(dateFormat.format(depreciation.getCreateAt()));
-        depreciationResponse.setActive(depreciation.isActive());
-        depreciationResponse.setUserResponse(depreciationServiceClient.fetchUser(depreciation.getUserId()));
-        return depreciationResponse;
-    }
+//    public DepreciationResponse EntityToResponse(Depreciation depreciation){
+//        DepreciationResponse depreciationResponse = new DepreciationResponse();
+//        AssetResponse assetResponse = depreciationServiceClient.fetchAsset(depreciation.getAssetId());
+//        depreciationResponse.setAssetResponse(assetResponse);
+//        depreciationResponse.setId(depreciation.getId());
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//        depreciationResponse.setFromDate(dateFormat.format(depreciation.getFromDate()));
+//        if(depreciation.getToDate()==null){
+//            depreciationResponse.setToDate(null);
+//            depreciationResponse.setAmountMonth(new Date().getMonth() - depreciation.getFromDate().getMonth());
+//            depreciationResponse.setValueDepreciation(commonMapping.calculatorDepreciation(assetResponse, dateFormat.format(depreciation.getFromDate()),dateFormat.format(new Date()), ));
+////            depreciationResponse.setValueDepreciation(depreciationServiceClient.getDepreciationValue(depreciation.getAssetId(),dateFormat.format(depreciation.getFromDate()) ,dateFormat.format(new Date())));
+//        }
+//        else{
+//            depreciationResponse.setToDate(dateFormat.format(depreciation.getToDate()));
+//            depreciationResponse.setAmountMonth(depreciation.getToDate().getMonth() - depreciation.getFromDate().getMonth());
+//            depreciationResponse.setValueDepreciation(depreciation.getValueDepreciation());
+//        }
+//        depreciationResponse.setCreateAt(dateFormat.format(depreciation.getCreateAt()));
+//        depreciationResponse.setActive(depreciation.isActive());
+//        depreciationResponse.setUserResponse(depreciationServiceClient.fetchUser(depreciation.getUserId()));
+//        return depreciationResponse;
+//    }
 
     public Depreciation updateDepreciation(Depreciation depreciation){
         Date endDate = new Date();
@@ -111,37 +114,62 @@ public class DepreciationMapping {
         return depreciation;
     }
 
-    public DepreciationByAssetResponse getDepreciationAssetResponse(Long assetId, List<Depreciation> lDepreciation){
+    public DepreciationByAssetResponse getDepreciationAssetResponse(Long assetId, List<Depreciation> lDepreciation) throws ParseException {
         DepreciationByAssetResponse depreciationByAssetResponse = new DepreciationByAssetResponse();
-        Double valuePrev = 0.0;
+        LocalDate localDate = LocalDate.now();
+        int amountDate = 0;
         Double valuePre = 0.0;
+        Double valuePrev = depreciationHistoryService.totalValueDepreciationByAssetId(assetId,new Date().getMonth()+1, new Date().getYear()+1900);
+        //Khởi tạo ngày đầu tháng và hôm nay
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date sDate = dateFormat.parse(localDate.getYear()+"-"+localDate.getMonthValue()+"-01");
+        Date today = new Date();
         AssetResponse assetResponse = depreciationServiceClient.fetchAsset(assetId);
+        Date expDate = dateFormat.parse(assetResponse.getExpDate());
         List<DepreciationByAssetResponse.DepreciationAssetHistory> list = new ArrayList<>();
         for(Depreciation depreciation: lDepreciation){
             List<DepreciationHistoryByDepreciation> depreciationList = getDepreciationHistoryByDepreciation(depreciation);
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             UserResponse userResponse = depreciationServiceClient.fetchUser(depreciation.getUserId());
             Double value = 0.0;
-            Date toDate = depreciation.getToDate();
             if(depreciation.getToDate() == null){
-                toDate = new Date();
-                Object object = depreciationHistoryService.getValueHistoryByDepreciation(toDate.getMonth()+1,toDate.getYear()+1900, depreciation.getId());
+                Object object = depreciationHistoryService.getValueHistoryByDepreciation(localDate.getMonthValue(), localDate.getYear(), depreciation.getId());
                 value += object != null ? Double.valueOf(((Object[])object)[1].toString()): 0.0;
-                valuePrev += value;
-                valuePre = depreciationServiceClient.getDepreciationValue(depreciation.getAssetId(), (toDate.getYear()+1900)+"-"+(toDate.getMonth()+1)+"-01", dateFormat.format(toDate));
-                value += valuePre;
-            }else valuePrev+=depreciation.getValueDepreciation();
-            long amountDate = TimeUnit.DAYS.convert(Math.abs(toDate.getTime() - depreciation.getFromDate().getTime()), TimeUnit.MILLISECONDS);
+                //Kiểm tra tài sản còn khấu hao hay không
+                if(expDate.after(sDate)&&expDate.before(today)){
+                    //Khấu hao được tính từ ngày đầu đến ngày kết thúc
+                    amountDate = expDate.getDate()-sDate.getDate()+1;
+                    valuePre = (Double.valueOf(amountDate)/localDate.lengthOfMonth())*depreciation.getValuePerMonth();
+                }else if(expDate.before(sDate)){
+                    //Khấu hao đã kết thúc
+                    valuePre = 0.0;
+                    amountDate = 0;
+                }else {
+                    //Khấu hao vẫn chưa hết
+                    amountDate = today.getDate()-sDate.getDate()+1;
+                    valuePre = (Double.valueOf(amountDate)/localDate.lengthOfMonth())*depreciation.getValuePerMonth();
+                }
+                value+=valuePre;
+            }
+            String toDate;
+            if(depreciation.getToDate()==null&&depreciation.getExpDate().before(sDate))
+                toDate = "Tài sản đã kết thúc khấu hao";
+            else if(depreciation.getToDate()==null)
+                toDate = "Đang sử dụng";
+            else
+                toDate = dateFormat.format(depreciation.getToDate());
             list.add(new DepreciationByAssetResponse.DepreciationAssetHistory(depreciation.getId()
                     ,userResponse
                     ,dateFormat.format(depreciation.getFromDate())
-                    ,depreciation.getToDate()==null?"Đang sử dụng": dateFormat.format(depreciation.getToDate())
+                    ,toDate
                     ,depreciation.getValueDepreciation()==null?value: depreciation.getValueDepreciation()
-                    ,amountDate
+                    ,0
                     ,depreciationList));
         }
+        //Tạo thông tin Response
         depreciationByAssetResponse.setValuePre(valuePre);
         depreciationByAssetResponse.setValuePrev(valuePrev);
+        depreciationByAssetResponse.setLengthOfMonth(localDate.lengthOfMonth());
+        depreciationByAssetResponse.setAmountDate(amountDate);
         depreciationByAssetResponse.setAmountMonth(assetResponse.getAmountOfYear());
         depreciationByAssetResponse.setAssetId(assetId);
         depreciationByAssetResponse.setAssetName(assetResponse.getAssetName());
@@ -175,63 +203,6 @@ public class DepreciationMapping {
             }
         }
         return list;
-    }
-
-    public Double calculatorDepreciationPerMonth(AssetResponse asset, Double value, String lastDate) throws ParseException {
-        //Lấy thông tin tài sản và thời gian
-        Date lDate = new SimpleDateFormat("yyyy-MM-dd").parse(lastDate);
-        Date eDate = new SimpleDateFormat("yyyy-MM-dd").parse(asset.getExpDate());
-        //Tính số ngày trong tháng
-        int daysInMonthLDate = LocalDate.from(lDate.toInstant().atZone(ZoneId.systemDefault())).lengthOfMonth();
-        int daysInMonthEDate = LocalDate.from(eDate.toInstant().atZone(ZoneId.systemDefault())).lengthOfMonth();
-        //Tính số tháng còn lại
-        int amountMonth = (lDate.getDate() >= daysInMonthLDate/2 ? 0 : 1)
-                + (11 - lDate.getMonth())
-                + (eDate.getYear() - lDate.getYear() -1)*12
-                + (eDate.getMonth())
-                + (eDate.getDate() > daysInMonthEDate/2 ? 1: 0);
-        //Kiểm tra tài sản có nâng cấp hay không
-        if(asset.getUpdateId()!=null){
-            return (asset.getPrice() - value)/amountMonth;
-        }
-        return asset.getPrice()/asset.getAmountOfYear();
-    }
-    public Double calculatorDepreciation(AssetResponse asset, String fromDate, String toDate, Double value, String lastDate) throws ParseException {
-        //Lấy thông tin tài sản và thời gian
-        Date fDate = new SimpleDateFormat("yyyy-MM-dd").parse(fromDate);
-        Date tDate = new SimpleDateFormat("yyyy-MM-dd").parse(toDate);
-        Date lDate = new SimpleDateFormat("yyyy-MM-dd").parse(lastDate);
-        Date eDate = new SimpleDateFormat("yyyy-MM-dd").parse(asset.getExpDate());
-        int daysInMonth = LocalDate.from(fDate.toInstant().atZone(ZoneId.systemDefault())).lengthOfMonth();
-        int daysInLMonth = LocalDate.from(lDate.toInstant().atZone(ZoneId.systemDefault())).lengthOfMonth();
-        int daysInEMonth = LocalDate.from(eDate.toInstant().atZone(ZoneId.systemDefault())).lengthOfMonth();
-        int amountMonth = (lDate.getDate() >= daysInLMonth/2 ? 0 : 1)
-                + (11 - lDate.getMonth())
-                + (eDate.getYear() - lDate.getYear() -1)*12
-                + (eDate.getMonth())
-                + (eDate.getDate() > daysInEMonth/2 ? 1: 0);
-        //Kiểm tra thông tin là tháng cuối hay chưa
-        if(eDate.getMonth()==fDate.getMonth()&&eDate.getYear()==fDate.getYear())
-            return depreciation3(asset.getPrice(),value,amountMonth);
-        //Kiểm tra tài sản có nâng cấp hay không
-        if(asset.getUpdateId()!=null){
-            return depreciation2(asset.getPrice(),value,Long.valueOf(amountMonth),tDate.getDate()-fDate.getDate()+1,daysInMonth);
-        }
-        return depreciation1(asset.getPrice(), asset.getAmountOfYear(),tDate.getDate()-fDate.getDate()+1,daysInMonth);
-    }
-
-    //Công thức tính khấu hao 1
-    public Double depreciation1(Double price, int amountMonth, int days, int amountDay) {
-        return (price/amountMonth)*(Double.valueOf(days)/amountDay);
-    }
-
-    //Công thức tính khấu hao 2
-    public Double depreciation2(Double price, Double valueUsed, Long amountMonth, int days, int amountDay){
-        return ((price - valueUsed)/amountMonth)*(Double.valueOf(days)/amountDay);
-    }
-    //Công thức tính khấu hao 3
-    public Double depreciation3(Double price, Double valueUsed,int amountMonth){
-        return price - valueUsed - (amountMonth-1)*((price-valueUsed)/amountMonth);
     }
 
 }

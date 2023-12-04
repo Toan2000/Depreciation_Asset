@@ -18,6 +18,8 @@ public class DepreciationByAssetResponse {
     private Double price;
     private String fromDate;
     private String expDate;
+    private int amountDate;
+    private int lengthOfMonth;
     private String changePrice;
     private Double valuePrev;
     private Double valuePre;

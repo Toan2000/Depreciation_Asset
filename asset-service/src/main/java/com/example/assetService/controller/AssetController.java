@@ -2,6 +2,7 @@ package com.example.assetService.controller;
 
 import com.example.assetService.client.AssetServiceClient;
 import com.example.assetService.dto.request.AssetRequest;
+import com.example.assetService.dto.request.DeliveryRequest;
 import com.example.assetService.dto.request.DepreciationRequest;
 import com.example.assetService.dto.response.AssetResponse;
 import com.example.assetService.dto.response.Response;
@@ -185,11 +186,11 @@ public class AssetController {
         return new ResponseEntity(new Response("Tạo tài sản thất bại",null),HttpStatus.NOT_ACCEPTABLE);
     }
     @PutMapping("/user/{id}")
-    public ResponseEntity<Response> addUserUsed(@PathVariable Long id,@RequestParam Long userId){
+    public ResponseEntity<Response> addUserUsed(@PathVariable Long id, @RequestBody DeliveryRequest deliveryRequest){
         Asset asset = assetService.findAssetById(id);
         if(asset == null) return new ResponseEntity<>(new Response("Không tìm thấy tài sản",null),HttpStatus.NOT_FOUND);
         if(asset.getUserUsedId() != null) return new ResponseEntity<>(new Response("Tài sản đang được sử dụng",null),HttpStatus.NOT_FOUND);
-        asset = assetMapping.updateAsset(asset,userId);
+        asset = assetMapping.updateAsset(asset,deliveryRequest);
         if(asset == null) return new ResponseEntity<>(new Response("Bàn giao tài sản thất bại",null),HttpStatus.NOT_FOUND);
         assetService.createAsset(asset);
         return new ResponseEntity<>(new Response("Cập nhật thông tin thành công",null),HttpStatus.OK);

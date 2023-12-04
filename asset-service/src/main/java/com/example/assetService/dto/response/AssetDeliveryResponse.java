@@ -18,7 +18,7 @@ public class AssetDeliveryResponse {
     public static class DeliveryHistory{
         private UserResponse userResponse;
         private String deliveryDate;
-        private int status;
+        private Long status;
         private String deliveryType;
         private String note;
     }

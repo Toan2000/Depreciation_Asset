@@ -33,6 +33,8 @@ public class Depreciation {
     private Date fromDate;
     @Column(name = "to_date")
     private Date toDate;
+    @Column(name = "exp_date")
+    private Date expDate;
     @Column(name = "amount_month")
     private int amountMonth;
     @Column(name = "value_depreciation")

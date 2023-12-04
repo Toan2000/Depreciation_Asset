@@ -61,7 +61,12 @@ public class DepreciationHistoryServiceImpl implements DepreciationHistoryServic
 
     @Override
     public List<Object> getDepreciationByAllDept(int year) {
-        return depreciationHistoryRepository.getDepreciationByAllDeptTest(year);
+        return depreciationHistoryRepository.getDepreciationByAllDept(year);
+    }
+
+    @Override
+    public List<Object> getDepreciationByDeptIds(int year, List<Long> deptIds) {
+        return depreciationHistoryRepository.getDepreciationByDeptIds(deptIds,year);
     }
 
     @Override
@@ -78,6 +83,16 @@ public class DepreciationHistoryServiceImpl implements DepreciationHistoryServic
         if(result==null)
             return 0.0;
         return result;
+    }
+
+    @Override
+    public Double totalValueDepreciationByAssetId(Long assetId) {
+        return depreciationHistoryRepository.totalValueDepreciationByAssetId(assetId);
+    }
+
+    @Override
+    public Double totalValueDepreciationByAssetId(Long assetId, int month, int year) {
+        return depreciationHistoryRepository.totalValueDepreciationByAssetId(assetId, month, year);
     }
 
 }

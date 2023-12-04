@@ -2,11 +2,10 @@ package com.example.assetService.service.Impl;
 
 import com.example.assetService.client.AssetServiceClient;
 import com.example.assetService.dto.response.UserResponse;
+import com.example.assetService.mapping.ExcelUpload;
 import com.example.assetService.model.Asset;
 import com.example.assetService.repository.AssetRepository;
-import com.example.assetService.repository.AssetTypeRepository;
 import com.example.assetService.service.AssetService;
-import com.example.assetService.service.ExcelUploadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,12 +28,12 @@ import java.util.regex.Pattern;
 public class AssetServiceImpl implements AssetService {
     private final AssetRepository assetRepository;
     private final AssetServiceClient assetServiceClient;
-    private final ExcelUploadService excelUploadService;
+    private final ExcelUpload excelUpload;
 
     public void saveAssetsToDatabase(MultipartFile file){
-        if(ExcelUploadService.isValidExcelFile(file)){
+        if(ExcelUpload.isValidExcelFile(file)){
             try {
-                List<Asset> assets = excelUploadService.getAssetsDataFromExcel(file.getInputStream());
+                List<Asset> assets = excelUpload.getAssetsDataFromExcel(file.getInputStream());
                 this.assetRepository.saveAll(assets);
             } catch (IOException e) {
                 throw new IllegalArgumentException("The file is not a valid excel file");

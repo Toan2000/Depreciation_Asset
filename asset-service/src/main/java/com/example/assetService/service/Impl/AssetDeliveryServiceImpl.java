@@ -21,4 +21,9 @@ public class AssetDeliveryServiceImpl implements AssetDeliveryService {
     public List<AssetDelivery> findByAssetIdAndDeliveryType(Long assetId, int deliveryType) {
         return assetDeliveryRepository.findByAssetIdAndDeliveryType(assetId,deliveryType);
     }
+
+    @Override
+    public void createDelivery(AssetDelivery assetDelivery) {
+        assetDeliveryRepository.save(assetDelivery);
+    }
 }

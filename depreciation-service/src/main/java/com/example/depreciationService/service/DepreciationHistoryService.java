@@ -18,9 +18,12 @@ public interface DepreciationHistoryService {
     Object getValueHistoryByAsset(int month, int year, Long assetId);
     Object getValueHistoryByDepreciation(int month, int year, Long depreciationId);
     List<Object> getDepreciationByAllDept(int year);
+    List<Object> getDepreciationByDeptIds(int year,List<Long> deptIds);
     List<Object> getDepreciationByAllDeptInYear(int year, Long deptId);
 
     Double totalValueDepreciation();
 
     Double getTotalValueByDeptIdAndAssetType(Long deptId, Long assetTypeId, int year);
+    Double totalValueDepreciationByAssetId(Long assetId);
+    Double totalValueDepreciationByAssetId(Long assetId, int month, int year);
 }

@@ -1,7 +1,6 @@
-package com.example.assetService.service;
+package com.example.assetService.mapping;
 
 import com.example.assetService.dto.request.AssetRequest;
-import com.example.assetService.mapping.AssetMapping;
 import com.example.assetService.model.Asset;
 import lombok.AllArgsConstructor;
 import org.apache.poi.ss.usermodel.Cell;
@@ -13,10 +12,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
 @AllArgsConstructor
 @Component
-public class ExcelUploadService {
+public class ExcelUpload {
     private final AssetMapping assetMapping;
     public static boolean isValidExcelFile(MultipartFile file){
         return Objects.equals(file.getContentType(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" );
@@ -46,7 +48,6 @@ public class ExcelUploadService {
                         case 4 -> assetRequest.setBrandId(Math.round(cell.getNumericCellValue()));
                         case 5 -> assetRequest.setStorageId(Math.round(cell.getNumericCellValue()));
                     }
-
                     cellIndex++;
                 }
                 assets.add(assetMapping.getAsset(assetRequest));
@@ -56,5 +57,4 @@ public class ExcelUploadService {
         }
         return assets;
     }
-
 }

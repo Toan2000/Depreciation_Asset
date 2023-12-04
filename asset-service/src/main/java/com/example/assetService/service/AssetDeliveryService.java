@@ -11,4 +11,5 @@ import java.util.List;
 public interface AssetDeliveryService {
     List<AssetDelivery> findByAssetIdAndStatus(Long assetId, int status);
     List<AssetDelivery> findByAssetIdAndDeliveryType(Long assetId, int deliveryType);
+    void createDelivery(AssetDelivery assetDelivery);
 }

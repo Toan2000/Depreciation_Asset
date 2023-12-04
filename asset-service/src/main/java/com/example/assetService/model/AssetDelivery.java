@@ -24,7 +24,7 @@ public class AssetDelivery {
     @Column(name = "dept_id")
     private Long deptId;
     @Column(name = "status")
-    private int status;
+    private Long status;
     @Column(name = "delivery_type")
     private int deliveryType;
     @Column(name = "note")

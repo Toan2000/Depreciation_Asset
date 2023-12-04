@@ -19,7 +19,7 @@ public interface DepreciationRepository extends JpaRepository<Depreciation,Long>
             countQuery = "SELECT * FROM public.depreciation WHERE public.depreciation.to_date IS NULL",
             nativeQuery = true)
     List<Depreciation> getAllDepreciationNoToDate();
-    @Query(value = "SELECT * FROM public.depreciation WHERE (from_date >= ?1 AND from_date <=?2) OR to_date IS NULL",nativeQuery = true)
+    @Query(value = "SELECT * FROM public.depreciation WHERE (from_date >= ?1 AND from_date <=?2) OR (to_date IS NULL AND exp_date >=?1)",nativeQuery = true)
     List<Depreciation> getDepreciationByFromDateAndToDate(Date fromDate, Date toDate);
     @Query(value = "SELECT asset_id,MAX(to_date), SUM(value_depreciation) " +
             "FROM public.depreciation " +

@@ -2,6 +2,7 @@ package com.example.assetService.mapping;
 
 import com.example.assetService.client.AssetServiceClient;
 import com.example.assetService.dto.request.AssetRequest;
+import com.example.assetService.dto.request.DeliveryRequest;
 import com.example.assetService.dto.request.DepreciationRequest;
 import com.example.assetService.dto.response.AssetDeliveryResponse;
 import com.example.assetService.dto.response.AssetResponse;
@@ -57,8 +58,13 @@ public class AssetMapping {
         assetResponse.setDateInStored(dateFormat.format(asset.getDateInStored()));
         if(asset.getDateUsed() != null)
             assetResponse.setDateUsed(dateFormat.format(asset.getDateUsed()));
+        else
+            assetResponse.setDateUsed("Chưa sử dụng");
         assetResponse.setUserIdUsed(asset.getUserUsedId());
-        assetResponse.setExpDate(dateFormat.format(asset.getDateExperience()));
+        if(asset.getDateExperience()!=null)
+            assetResponse.setExpDate(dateFormat.format(asset.getDateExperience()));
+        else
+            assetResponse.setExpDate("Chưa sử dụng");
         assetResponse.setDeptIdUsed(asset.getDeptUsedId());
         assetResponse.setSerial(asset.getSerialNumber());
         Brand brand = brandService.findById(asset.getBrandId());
@@ -77,31 +83,50 @@ public class AssetMapping {
     public Asset getAsset(AssetRequest assetRequest){
         Asset asset = new Asset();
         asset.setDateInStored(new Date());
-        AssetType assetType = assetTypeService.findAssetTypeById(asset.getAssetType());
+        AssetType assetType = assetTypeService.findAssetTypeById(assetRequest.getAssetTypeId());
         asset.setTime(Long.valueOf(assetType.getAmountOfYear()));
         asset.setAssetName(assetRequest.getAssetName());
         asset.setAssetType(assetRequest.getAssetTypeId());
         asset.setAssetStatus(assetRequest.getStatus());
         asset.setPrice(assetRequest.getPrice());
         asset.setSerialNumber(assetRequest.getSerial());
+        asset.setBrandId(assetRequest.getBrandId());
+        asset.setStorageId(assetRequest.getStorageId());
         return asset;
     }
     //Thay đổi thông tin người sử dụng tài sản
-    public Asset updateAsset(Asset asset, Long userId){
+    public Asset updateAsset(Asset asset, DeliveryRequest deliveryRequest){
         // Lấy thông tin người dùng
-        UserResponse userResponse = assetServiceClient.fetchUser(Long.valueOf(userId));
+        UserResponse userResponse = assetServiceClient.fetchUser(Long.valueOf(deliveryRequest.getUserId()));
         if(userResponse == null)
             return null;
         asset.setAssetStatus(Long.valueOf(1));
+        System.out.println(asset.getDateUsed());
+        if(asset.getDateUsed()==null){
+            LocalDate localDate = LocalDate.now();
+            System.out.println(asset.getDateUsed());
+            Date expDate = Date.from(localDate.plusMonths(asset.getTime()).atStartOfDay(ZoneId.systemDefault()).toInstant());
+            asset.setDateExperience(expDate);
+        }
         asset.setDateUsed(new Date());
-        asset.setUserUsedId(userId);
+        asset.setUserUsedId(deliveryRequest.getUserId());
         asset.setDeptUsedId(Long.valueOf(userResponse.getDept().getId()));
         DepreciationRequest depreciationRequest = new DepreciationRequest();
         depreciationRequest.setAssetId(asset.getAssetId());
         depreciationRequest.setDeptId(Long.valueOf(userResponse.getDept().getId()));
-        depreciationRequest.setUserId(userId);
+        depreciationRequest.setUserId(userResponse.getId());
         //Tạo thông tin khấu hao
         assetServiceClient.addDepreciation(depreciationRequest);
+        //Tạo thông tin bàn giao
+        AssetDelivery assetDelivery = new AssetDelivery();
+        assetDelivery.setAssetId(asset.getAssetId());
+        assetDelivery.setDeliveryType(1);
+        assetDelivery.setNote(deliveryRequest.getNote());
+        assetDelivery.setStatus(asset.getAssetStatus());
+        assetDelivery.setDeptId(Long.valueOf(userResponse.getDept().getId()));
+        assetDelivery.setUserId(Long.valueOf(userResponse.getDept().getId()));
+        assetDelivery.setCreateAt(new Date());
+        assetDeliveryService.createDelivery(assetDelivery);
         return asset;
     }
     //Thu hồi tài sản

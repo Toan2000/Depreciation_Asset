@@ -75,35 +75,35 @@ public class DepreciationHistoryMapping {
 
     }
 
-    public AssetDepreciationResponse getEntityToResponse(Long assetId){
-        Date date = new Date();
-        AssetDepreciationResponse assetDepreciationResponse = new AssetDepreciationResponse();
-        AssetResponse assetResponse = depreciationServiceClient.fetchAsset(assetId);
-        assetDepreciationResponse.setAssetId(assetId);
-        assetDepreciationResponse.setSerialNumber(assetResponse.getSerial());
-        assetDepreciationResponse.setPrice(assetResponse.getPrice());
-        assetDepreciationResponse.setFromDate(assetResponse.getDateUsed());
-        assetDepreciationResponse.setValuePerMonth(assetResponse.getPrice()/assetResponse.getAmountOfYear());
-        assetDepreciationResponse.setAmountMonth(assetResponse.getAmountOfYear());
-        // Giá trị khấu hao kì này
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Double depreciationPresent = depreciationServiceClient.getDepreciationValue(assetId,(date.getYear()+1900)+"-"+(date.getMonth()+1)+"-01",dateFormat.format(date));
-        // Giá trị đã khấu hao
-        Object accumulated = depreciationHistoryService.getValueHistoryByAsset(date.getMonth()+1, date.getYear()+1900, assetId);
-        if(accumulated!= null){
-            assetDepreciationResponse.setAccumulated(Double.valueOf(((Object[])accumulated)[1].toString()));
-            assetDepreciationResponse.setValuePresent(assetResponse.getPrice()-Double.valueOf(((Object[])accumulated)[1].toString()));
-        }
-        else {
-            assetDepreciationResponse.setAccumulated(0.0);
-            assetDepreciationResponse.setValuePresent(assetResponse.getPrice());
-        }
-        assetDepreciationResponse.setAmountDayOfMonth(LocalDate.from(DateTimeFormatter.ISO_LOCAL_DATE.parse((date.getYear()+1900)+"-"+(date.getMonth()+1)+"-01")).lengthOfMonth());
-        assetDepreciationResponse.setAmountDateDepreciation(date.getDate());
-        Map<String,Object> months = new HashMap<>();
-        assetDepreciationResponse.setAssetName(assetResponse.getAssetName());
-        return assetDepreciationResponse;
-    }
+//    public AssetDepreciationResponse getEntityToResponse(Long assetId){
+//        Date date = new Date();
+//        AssetDepreciationResponse assetDepreciationResponse = new AssetDepreciationResponse();
+//        AssetResponse assetResponse = depreciationServiceClient.fetchAsset(assetId);
+//        assetDepreciationResponse.setAssetId(assetId);
+//        assetDepreciationResponse.setSerialNumber(assetResponse.getSerial());
+//        assetDepreciationResponse.setPrice(assetResponse.getPrice());
+//        assetDepreciationResponse.setFromDate(assetResponse.getDateUsed());
+//        assetDepreciationResponse.setValuePerMonth(assetResponse.getPrice()/assetResponse.getAmountOfYear());
+//        assetDepreciationResponse.setAmountMonth(assetResponse.getAmountOfYear());
+//        // Giá trị khấu hao kì này
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//        Double depreciationPresent = depreciationServiceClient.getDepreciationValue(assetId,(date.getYear()+1900)+"-"+(date.getMonth()+1)+"-01",dateFormat.format(date));
+//        // Giá trị đã khấu hao
+//        Object accumulated = depreciationHistoryService.getValueHistoryByAsset(date.getMonth()+1, date.getYear()+1900, assetId);
+//        if(accumulated!= null){
+//            assetDepreciationResponse.setAccumulated(Double.valueOf(((Object[])accumulated)[1].toString()));
+//            assetDepreciationResponse.setValuePresent(assetResponse.getPrice()-Double.valueOf(((Object[])accumulated)[1].toString()));
+//        }
+//        else {
+//            assetDepreciationResponse.setAccumulated(0.0);
+//            assetDepreciationResponse.setValuePresent(assetResponse.getPrice());
+//        }
+//        assetDepreciationResponse.setAmountDayOfMonth(LocalDate.from(DateTimeFormatter.ISO_LOCAL_DATE.parse((date.getYear()+1900)+"-"+(date.getMonth()+1)+"-01")).lengthOfMonth());
+//        assetDepreciationResponse.setAmountDateDepreciation(date.getDate());
+//        Map<String,Object> months = new HashMap<>();
+//        assetDepreciationResponse.setAssetName(assetResponse.getAssetName());
+//        return assetDepreciationResponse;
+//    }
     //Tất cả thông tin khấu hao theo phòng ban
 //    public List<DepreciationDeptResponse> getDepreciationDeptResponse(List<Object> data){
 //        List<DepreciationDeptResponse> depreciationDeptResponses = new ArrayList<>();

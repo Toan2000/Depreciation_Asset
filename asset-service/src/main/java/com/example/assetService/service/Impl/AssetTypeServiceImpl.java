@@ -24,8 +24,8 @@ public class AssetTypeServiceImpl implements AssetTypeService {
     @Override
     public AssetType findAssetTypeById(Long id) {
         Optional<AssetType> assetType = assetTypeRepository.findById(id);
-        if(assetType.isPresent())
-            return assetType.get();
-        return null;
+        if(assetType.isEmpty())
+            return null;
+        return assetType.get();
     }
 }

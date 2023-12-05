@@ -67,6 +67,11 @@ public interface DepreciationHistoryRepository extends JpaRepository<Depreciatio
             "WHERE asset_id = ?1 AND ((month < ?2 AND year=?3) OR year<?3)" +
             "GROUP BY asset_id;",nativeQuery = true)
     Double totalValueDepreciationByAssetId(Long assetId,int month, int year);
+    @Query(value = "SELECT sum(\"value\")" +
+            "FROM \"public\".depreciation_history " +
+            "WHERE depreciation_id = ?1 AND ((month < ?2 AND year=?3) OR year<?3)" +
+            "GROUP BY depreciation_id;",nativeQuery = true)
+    Double totalValueDepreciationByDepreciationId(Long depreciationId,int month, int year);
     @Query(value = "SELECT SUM(value)\n" +
             "FROM depreciation_history, depreciation\n" +
             "WHERE depreciation.id = depreciation_history.depreciation_id " +

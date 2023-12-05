@@ -104,13 +104,53 @@ public class DepreciationMapping {
 //        return depreciationResponse;
 //    }
 
-    public Depreciation updateDepreciation(Depreciation depreciation){
+    public Depreciation updateDepreciation(Depreciation depreciation) throws ParseException {
         Date endDate = new Date();
         depreciation.setToDate(endDate);
-        depreciation.setAmountMonth(0);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        depreciation.setValueDepreciation(depreciationServiceClient.getDepreciationValue(depreciation.getAssetId(),dateFormat.format(depreciation.getFromDate()), dateFormat.format(new Date())));
+        int fMonth = LocalDate.of(depreciation.getFromDate().getYear()+1900,depreciation.getFromDate().getMonth()+1,01).lengthOfMonth();
+        int eMonth = LocalDate.of(endDate.getYear()+1900,endDate.getMonth()+1,01).lengthOfMonth();
+        int exMonth = LocalDate.of(depreciation.getExpDate().getYear()+1900,depreciation.getExpDate().getMonth()+1,01).lengthOfMonth();
+        Date sDate = dateFormat.parse((endDate.getYear()+1900)+"-"+(endDate.getMonth()+1)+"-01");
+        int amountMonth = 0;
+        //Tính lại giá trị đã khấu hao
+        Double value = depreciationHistoryService.totalValueDepreciationByDepreciationId(depreciation.getId(),endDate.getMonth()+1,endDate.getYear()+1900);
+        Double valueInMonth = 0.0;
+        if(depreciation.getExpDate().before(sDate)){
+            valueInMonth= 0.0;
+            amountMonth = (depreciation.getFromDate().getDate() > fMonth/2 ? 0 : 1)
+                    + (11 - depreciation.getFromDate().getMonth())
+                    + (depreciation.getExpDate().getYear() - depreciation.getFromDate().getYear() -1)*12
+                    + (depreciation.getExpDate().getMonth())
+                    + (depreciation.getExpDate().getDate() > exMonth/2 ? 1: 0);
+        }else if(depreciation.getExpDate().after(sDate)&&depreciation.getExpDate().before(endDate)){
+            valueInMonth = (Double.valueOf(depreciation.getExpDate().getDate() - sDate.getDate()+1)/eMonth) * depreciation.getValuePerMonth();
+            amountMonth = (depreciation.getFromDate().getDate() > fMonth/2 ? 0 : 1)
+                    + (11 - depreciation.getFromDate().getMonth())
+                    + (depreciation.getExpDate().getYear() - depreciation.getFromDate().getYear() -1)*12
+                    + (depreciation.getExpDate().getMonth())
+                    + (depreciation.getExpDate().getDate() > exMonth/2 ? 1: 0);
+        }else if(depreciation.getExpDate().after(endDate)){
+            valueInMonth = (Double.valueOf(endDate.getDate() - sDate.getDate()+1)/eMonth) * depreciation.getValuePerMonth();
+            amountMonth = (depreciation.getFromDate().getDate() > fMonth/2 ? 0 : 1)
+                    + (11 - depreciation.getFromDate().getMonth())
+                    + (endDate.getYear() - depreciation.getFromDate().getYear() -1)*12
+                    + (endDate.getMonth())
+                    + (endDate.getDate() > eMonth/2 ? 1: 0);
+        }
+        depreciation.setAmountMonth(amountMonth);
+        depreciation.setValueDepreciation(value+valueInMonth);
         depreciation.setStatus(2);
+        //Lưu thông tin lịch sử khấu hao
+        DepreciationHistory depreciationHistory = new DepreciationHistory();
+        depreciationHistory.setCreateAt(new Date());
+        depreciationHistory.setMonth(endDate.getMonth()+1);
+        depreciationHistory.setYear(endDate.getYear()+1900);
+        depreciationHistory.setDepreciation(depreciation);
+        depreciationHistory.setAssetId(depreciation.getAssetId());
+        depreciationHistory.setAssetTypeId(depreciation.getAssetTypeId());
+        depreciationHistory.setValue(valueInMonth);
+        depreciationHistoryService.saveDepreciationHistory(depreciationHistory);
         return depreciation;
     }
 

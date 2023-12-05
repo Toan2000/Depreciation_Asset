@@ -196,11 +196,11 @@ public class AssetController {
         return new ResponseEntity<>(new Response("Cập nhật thông tin thành công",null),HttpStatus.OK);
     }
     @PutMapping("/recall/{id}")
-    public ResponseEntity<Response> recallAsset(@PathVariable Long id){
+    public ResponseEntity<Response> recallAsset(@PathVariable Long id,@RequestParam(required = false) String note){
         Asset asset = assetService.findAssetById(id);
         if(asset == null) return new ResponseEntity<>(new Response("Không tìm thấy tài sản",null),HttpStatus.NOT_FOUND);
-        if(asset.getUserUsedId() != null) return new ResponseEntity<>(new Response("Tài sản chưa được đưa vào sử dụng",null),HttpStatus.NOT_FOUND);
-        asset = assetMapping.recallAsset(asset);
+        if(asset.getUserUsedId() == null) return new ResponseEntity<>(new Response("Tài sản chưa được đưa vào sử dụng",null),HttpStatus.NOT_FOUND);
+        asset = assetMapping.recallAsset(asset,note);
         if(asset == null) return new ResponseEntity<>(new Response("Thu hồi tài sản thất bại",null),HttpStatus.NOT_FOUND);
         assetService.createAsset(asset);
         return new ResponseEntity<>(new Response("Cập nhật thông tin thành công",null),HttpStatus.OK);

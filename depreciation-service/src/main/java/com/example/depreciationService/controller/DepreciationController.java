@@ -44,12 +44,12 @@ public class DepreciationController {
     }
 
     //API Thực hiện tính toán và ngưng khấu hao
-    @PutMapping("/recall/{id}")
+    @GetMapping("/recall/{id}")
     public ResponseEntity updateDepreciation(@PathVariable Long id) throws ParseException {
         Depreciation depreciation = depreciationService.findDepreciationToUpdate(id);
         depreciation = depreciationMapping.updateDepreciation(depreciation);
         if(depreciationService.saveDepreciation(depreciation)){
-            depreciationHistoryService.saveDepreciationHistory(depreciationHistoryMapping.getHistory(depreciation));
+//            depreciationHistoryService.saveDepreciationHistory(depreciationHistoryMapping.getHistory(depreciation));
             return new ResponseEntity(true, HttpStatus.CREATED);
         }
         return new ResponseEntity(false,HttpStatus.NOT_ACCEPTABLE);

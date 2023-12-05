@@ -15,4 +15,5 @@ import java.util.Map;
 public class DepreciationHistoryByDepreciation {
     private int year;
     private Map<String,Double> months;
+    private Map<String,String> dates;
 }

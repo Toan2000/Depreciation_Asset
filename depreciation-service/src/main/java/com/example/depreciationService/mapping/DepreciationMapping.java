@@ -185,6 +185,7 @@ public class DepreciationMapping {
         List<DepreciationHistoryByDepreciation> list = new ArrayList<>();
         List<DepreciationHistory> depreciationHistories = depreciationHistoryService.findByDepreciation(depreciation);
         for(DepreciationHistory depreciationHistory : depreciationHistories){
+            LocalDate localDate = LocalDate.of(depreciationHistory.getYear(),depreciationHistory.getMonth(),15);
             DepreciationHistoryByDepreciation depreciationHistoryByDepreciation  = list.stream()
                     .filter(o -> o.getYear() == depreciationHistory.getYear())
                     .findFirst()
@@ -193,12 +194,19 @@ public class DepreciationMapping {
                 depreciationHistoryByDepreciation = new DepreciationHistoryByDepreciation();
                 depreciationHistoryByDepreciation.setYear(depreciationHistory.getYear());
                 Map<String,Double> months = new HashMap<>();
+                Map<String,String> dates = new HashMap<>();
                 months.put(String.valueOf(depreciationHistory.getMonth()),depreciationHistory.getValue());
+                Double result = (depreciationHistory.getValue()/depreciation.getValuePerMonth())*localDate.lengthOfMonth();
+                dates.put(String.valueOf(depreciationHistory.getMonth()),Math.round(result)+"/"+localDate.lengthOfMonth());
                 depreciationHistoryByDepreciation.setMonths(months);
+                depreciationHistoryByDepreciation.setDates(dates);
                 list.add(depreciationHistoryByDepreciation);
             }else{
                 Map<String,Double> months = depreciationHistoryByDepreciation.getMonths();
+                Map<String,String> dates = depreciationHistoryByDepreciation.getDates();
                 months.put(String.valueOf(depreciationHistory.getMonth()),depreciationHistory.getValue());
+                Double result = (depreciationHistory.getValue()/depreciation.getValuePerMonth())*localDate.lengthOfMonth();
+                dates.put(String.valueOf(depreciationHistory.getMonth()),Math.round(result)+"/"+localDate.lengthOfMonth());
                 depreciationHistoryByDepreciation.setMonths(months);
             }
         }

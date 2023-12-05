@@ -23,12 +23,12 @@ public class DepreciationHistoryController {
     private final DepreciationHistoryTask depreciationHistoryTask;
     //Tất cả thông tin khấu hao của phòng ban
     @GetMapping("/dept")
-    public ResponseEntity getDepreciationValueAllDept(@RequestParam int year, @RequestBody DepreciationByDeptRequest depreciation){
+    public ResponseEntity getDepreciationValueAllDeptV1(@RequestParam int year, @RequestParam(required = false) List<Long> ids){
         List<Object> records = new ArrayList<>();
-        if(depreciation.getDeptIds().size()==0)
+        if(ids.size()==0)
             records = depreciationHistoryService.getDepreciationByAllDept(year);
         else
-            records = depreciationHistoryService.getDepreciationByDeptIds(year,depreciation.getDeptIds());
+            records = depreciationHistoryService.getDepreciationByDeptIds(year,ids);
         return new ResponseEntity(depreciationHistoryMapping.getDepreciationDeptResponse(records), HttpStatus.OK);
     }
     @GetMapping("/test")

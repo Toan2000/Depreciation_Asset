@@ -195,7 +195,8 @@ public class DepreciationHistoryMapping {
             int month = Integer.valueOf(((Object[]) o)[2].toString());
             int year = Integer.valueOf(((Object[]) o)[3].toString());
             Double value = Double.valueOf(((Object[]) o)[4].toString());
-            Double valuePrev = depreciationHistoryService.getTotalValueByDeptIdAndAssetType(deptId, assetTypeId, year);
+            //Lấy giá trị dựa vào deptId
+            Double valuePrev = depreciationHistoryService.getTotalValueByDeptId(deptId, year);
             // Gọp thông tin phòng ban
             DepreciationDeptResponse depreciationDeptResponse = depreciationDeptResponses.stream()
                     .filter(dept -> dept.getDeptId() == deptId)
@@ -225,7 +226,6 @@ public class DepreciationHistoryMapping {
             else
                 depreciationDeptResponse.setTotal4(value+depreciationDeptResponse.getTotal4());
             depreciationDeptResponse.setTotalPrice(value+depreciationDeptResponse.getTotalPrice());
-            depreciationDeptResponse.setDepreciationPrev(valuePrev+depreciationDeptResponse.getDepreciationPrev());
             //Gọp thông tin Loại tài sản
             List<AssetType> assetTypes = depreciationDeptResponse.getAssetTypes();
             AssetType assetType = assetTypes.stream()
@@ -243,7 +243,6 @@ public class DepreciationHistoryMapping {
                 assetType.getMonths().put(String.valueOf(month),value);
                 assetTypes.add(assetType);
             }else {
-                assetType.setDepreciationPrev(valuePrev+assetType.getDepreciationPrev());
                 assetType.setTotalPrice(value+assetType.getTotalPrice());
                 assetType.getMonths().put(String.valueOf(month),value);
             }

@@ -100,4 +100,12 @@ public class DepreciationHistoryServiceImpl implements DepreciationHistoryServic
         return depreciationHistoryRepository.totalValueDepreciationByAssetId(depreciationId, month, year);
     }
 
+    @Override
+    public Double getTotalValueByDeptId(Long deptId, int year) {
+        Double result = depreciationHistoryRepository.getTotalValueByDeptId(deptId,year);
+        if(result==null)
+            return 0.0;
+        return result;
+    }
+
 }

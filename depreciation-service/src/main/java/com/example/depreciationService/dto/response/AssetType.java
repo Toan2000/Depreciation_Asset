@@ -15,5 +15,9 @@ public class AssetType {
     private String typeName;
     private Double totalPrice =0.0;
     private Double depreciationPrev= 0.0;
+    private Double total1=0.0;
+    private Double total2=0.0;
+    private Double total3=0.0;
+    private Double total4=0.0;
     private Map<String,Double> months = new HashMap<>();
 }

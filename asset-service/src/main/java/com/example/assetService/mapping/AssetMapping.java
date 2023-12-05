@@ -44,6 +44,7 @@ public class AssetMapping {
         assetResponse.setAssetTypeId(asset.getAssetType());
         AssetType assetType = assetTypeService.findAssetTypeById(asset.getAssetType());
         assetResponse.setAssetTypeName(assetType.getAssetName());
+        assetResponse.setAssetImage(asset.getAssetImage());
         assetResponse.setAmountOfYear(assetType.getAmountOfYear());
         assetResponse.setAssetGroupId(assetType.getAssetGroup().getId());
         assetResponse.setAssetGroup(assetType.getAssetGroup().getName());
@@ -120,7 +121,8 @@ public class AssetMapping {
         //Tạo thông tin bàn giao
         AssetDelivery assetDelivery = new AssetDelivery();
         assetDelivery.setAssetId(asset.getAssetId());
-        assetDelivery.setDeliveryType(1);
+        assetDelivery.setDeliveryType(0);
+        assetDelivery.setUserCreateId(Long.valueOf(10));
         assetDelivery.setNote(deliveryRequest.getNote());
         assetDelivery.setStatus(asset.getAssetStatus());
         assetDelivery.setDeptId(Long.valueOf(userResponse.getDept().getId()));
@@ -203,12 +205,9 @@ public class AssetMapping {
         assetDeliveryResponse.setDateUsed(dateFormat.format(asset.getDateUsed()));
         assetDeliveryResponse.setDateInStored(dateFormat.format(asset.getDateInStored()));
         List<AssetDeliveryResponse.DeliveryHistory> listDelivery = new ArrayList<>();
-        List<AssetDeliveryResponse.DeliveryHistory> listRecall = new ArrayList<>();
         List<AssetDeliveryResponse.DeliveryHistory> listBroken = new ArrayList<>();
-        //status == 0 => Lấy thông tin những cấp phát
-        List<AssetDelivery> assetDeliveries = assetDeliveryService.findByAssetIdAndDeliveryType(asset.getAssetId(), 0);
-        //status == 1 => Lấy lịch sử thu hồi
-        List<AssetDelivery> assetRecalls = assetDeliveryService.findByAssetIdAndDeliveryType(asset.getAssetId(), 1);
+        //status == 0 == 1 => Lấy thông tin những cấp phát, thu hồi
+        List<AssetDelivery> assetDeliveries = assetDeliveryService.findByAssetIdAndDeliveryType(asset.getAssetId());
         //status == 2 => Lấy lịch sử mất
         List<AssetDelivery> assetBroken = assetDeliveryService.findByAssetIdAndDeliveryType(asset.getAssetId(), 2);
         for(AssetDelivery assetDelivery : assetDeliveries){
@@ -217,21 +216,12 @@ public class AssetMapping {
             deliveryHistory.setNote(assetDelivery.getNote());
             UserResponse userResponse = assetServiceClient.fetchUser(assetDelivery.getUserId());
             deliveryHistory.setUserResponse(userResponse);
+            UserResponse userCreate = assetServiceClient.fetchUser(assetDelivery.getUserCreateId());
+            deliveryHistory.setUserCreateResponse(userCreate);
             deliveryHistory.setDeliveryType("Cấp phát");
             deliveryHistory.setStatus(assetDelivery.getStatus());
             deliveryHistory.setNote(assetDelivery.getNote());
             listDelivery.add(deliveryHistory);
-        }
-        for(AssetDelivery assetDelivery : assetRecalls){
-            AssetDeliveryResponse.DeliveryHistory recallHistory = new AssetDeliveryResponse.DeliveryHistory();
-            recallHistory.setDeliveryDate(dateFormat.format(assetDelivery.getCreateAt()));
-            recallHistory.setNote(assetDelivery.getNote());
-            UserResponse userResponse = assetServiceClient.fetchUser(assetDelivery.getUserId());
-            recallHistory.setUserResponse(userResponse);
-            recallHistory.setDeliveryType("Thu hồi");
-            recallHistory.setStatus(assetDelivery.getStatus());
-            recallHistory.setNote(assetDelivery.getNote());
-            listRecall.add(recallHistory);
         }
         for(AssetDelivery assetDelivery : assetBroken){
             AssetDeliveryResponse.DeliveryHistory brokenHistory = new AssetDeliveryResponse.DeliveryHistory();
@@ -239,13 +229,12 @@ public class AssetMapping {
             brokenHistory.setNote(assetDelivery.getNote());
             UserResponse userResponse = assetServiceClient.fetchUser(assetDelivery.getUserId());
             brokenHistory.setUserResponse(userResponse);
-            brokenHistory.setDeliveryType("Cấp phát");
+            brokenHistory.setDeliveryType("Mất");
             brokenHistory.setStatus(assetDelivery.getStatus());
             brokenHistory.setNote(assetDelivery.getNote());
             listBroken.add(brokenHistory);
         }
         assetDeliveryResponse.setDeliveryHistories(listDelivery);
-        assetDeliveryResponse.setRecallHistories(listRecall);
         assetDeliveryResponse.setBrokenHistories(listBroken);
         return assetDeliveryResponse;
     }

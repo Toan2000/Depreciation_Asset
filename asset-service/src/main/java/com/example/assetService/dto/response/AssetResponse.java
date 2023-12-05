@@ -15,6 +15,7 @@ import java.util.List;
 public class AssetResponse {
     private Long assetId;
     private String assetName;
+    private String assetImage;
     private long assetTypeId;
     private String assetTypeName;
     private int amountOfYear;

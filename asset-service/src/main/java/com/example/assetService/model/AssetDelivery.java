@@ -21,6 +21,8 @@ public class AssetDelivery {
     private Long assetId;
     @Column(name = "user_id")
     private Long userId;
+    @Column(name = "user_create_id")
+    private Long userCreateId;
     @Column(name = "dept_id")
     private Long deptId;
     @Column(name = "status")

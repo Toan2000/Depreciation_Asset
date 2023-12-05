@@ -19,6 +19,8 @@ public class Asset {
     private Long assetId;
     @Column(name = "asset_name")
     private String assetName;
+    @Column(name = "asset_image")
+    private String assetImage;
     @Column(name = "asset_status")
     private Long assetStatus;
     @Column(name = "asset_depreciation_time")

@@ -18,13 +18,13 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class DepartmentController {
     private final DepartmentService departmentService;
-    @GetMapping
-    public ResponseEntity<Response> getAllDepartment() {
-        Map<String,Object> data = new HashMap<>();
-        data.put("listDepartment",departmentService.findAllDepartment());
-        Response response = new Response("Danh sách phòng ban", data);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+//    @GetMapping
+//    public ResponseEntity<Response> getAllDepartment() {
+//        Map<String,Object> data = new HashMap<>();
+//        data.put("listDepartment",departmentService.findAllDepartment());
+//        Response response = new Response("Danh sách phòng ban", data);
+//        return new ResponseEntity<>(response, HttpStatus.OK);
+//    }
     @GetMapping("/{id}")
     public ResponseEntity<Response> getDepartmentById(@PathVariable Long id){
         Map<String, Object> data = new HashMap<>();
@@ -34,5 +34,11 @@ public class DepartmentController {
     @GetMapping("/v1/{id}")
     public ResponseEntity getDepartmentByIdV1(@PathVariable Long id){
         return new ResponseEntity(departmentService.findDepartmentById(id),HttpStatus.OK);
+    }
+    @GetMapping
+    public ResponseEntity<Response> getAllDepartment() {
+        Map<String,Object> data = new HashMap<>();
+        data.put("listDepartment",departmentService.findAllDepartment());
+        return new ResponseEntity(data, HttpStatus.OK);
     }
 }

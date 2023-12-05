@@ -49,7 +49,6 @@ public class DepreciationController {
         Depreciation depreciation = depreciationService.findDepreciationToUpdate(id);
         depreciation = depreciationMapping.updateDepreciation(depreciation);
         if(depreciationService.saveDepreciation(depreciation)){
-//            depreciationHistoryService.saveDepreciationHistory(depreciationHistoryMapping.getHistory(depreciation));
             return new ResponseEntity(true, HttpStatus.CREATED);
         }
         return new ResponseEntity(false,HttpStatus.NOT_ACCEPTABLE);

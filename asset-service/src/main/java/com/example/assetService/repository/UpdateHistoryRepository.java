@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.awt.print.Pageable;
+import java.util.Date;
 import java.util.List;
 
 public interface UpdateHistoryRepository extends JpaRepository<UpdateHistory, Long> {
@@ -17,5 +18,6 @@ public interface UpdateHistoryRepository extends JpaRepository<UpdateHistory, Lo
             "FROM public.update_history\n" +
             "WHERE value<0 AND asset_id = ?1",nativeQuery = true)
     List<UpdateHistory> getHistoryReduceById(Long assetId);
+    UpdateHistory findByAssetIdAndCreateAt(Long assetId, Date date);
 
 }

@@ -4,6 +4,7 @@ import com.example.assetService.client.AssetServiceClient;
 import com.example.assetService.dto.request.AssetRequest;
 import com.example.assetService.dto.request.DeliveryRequest;
 import com.example.assetService.dto.request.DepreciationRequest;
+import com.example.assetService.dto.request.UpdateHistoryRequest;
 import com.example.assetService.dto.response.AssetDeliveryResponse;
 import com.example.assetService.dto.response.AssetResponse;
 import com.example.assetService.dto.response.AssetUpdateHistoryResponse;
@@ -37,6 +38,7 @@ public class AssetMapping {
     private final StorageService storageService;
     private final AccesaryService accesaryService;
     private final AssetDeliveryService assetDeliveryService;
+    private final UpdateHistoryService updateHistoryService;
     public AssetResponse getAssetResponse(Asset asset) {
         AssetResponse assetResponse = new AssetResponse();
         assetResponse.setAssetId(asset.getAssetId());
@@ -96,7 +98,7 @@ public class AssetMapping {
         return asset;
     }
     //Thay đổi thông tin người sử dụng tài sản
-    public Asset updateAsset(Asset asset, DeliveryRequest deliveryRequest){
+    public Asset deliveryAsset(Asset asset, DeliveryRequest deliveryRequest){
         // Lấy thông tin người dùng
         UserResponse userResponse = assetServiceClient.fetchUser(Long.valueOf(deliveryRequest.getUserId()));
         if(userResponse == null)
@@ -287,7 +289,7 @@ public class AssetMapping {
                     dateFormat.format(updateHistory.getCreateAt()),
                     dateFormat.format(updateHistory.getDateUpdate()),
                     updateHistory.getValue(),updateHistory.getValuePrev(),
-                    updateHistory.getAmountMonthPresent()-updateHistory.getAmountMonthPrev(),
+                    updateHistory.getAmountMonthPresent() - updateHistory.getAmountMonthPrev(),
                     updateHistory.getNote(),
                     updateHistory.getStatus());
             list.add(response);
@@ -295,5 +297,29 @@ public class AssetMapping {
         assetUpdateHistoryResponse.setDateUpdateNearest(dateFormat.format(dateNew));
         assetUpdateHistoryResponse.setUpdateHistoryResponses(list);
         return assetUpdateHistoryResponse;
+    }
+
+    public Asset updateAsset(Asset asset, UpdateHistoryRequest updateHistoryRequest) throws ParseException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        UpdateHistory updateHistory = new UpdateHistory();
+        updateHistory.setAssetId(asset.getAssetId());
+        updateHistory.setDateUpdate(dateFormat.parse(updateHistoryRequest.getDateUpdate()));
+        updateHistory.setUserUpdateId(Long.valueOf(10));
+        updateHistory.setNote(updateHistoryRequest.getNote());
+        updateHistory.setStatus(updateHistoryRequest.getStatus());
+        updateHistory.setAmountMonthPresent(asset.getTime()+ updateHistoryRequest.getMonth());
+        updateHistory.setAmountMonthPrev(asset.getTime());
+        updateHistory.setValue(updateHistoryRequest.getValue());
+        updateHistory.setValuePrev(asset.getPrice());
+        updateHistory.setValuePresent(asset.getPrice()+ updateHistoryRequest.getValue());
+        updateHistory.setCreateAt(new Date());
+        updateHistoryService.save(updateHistory);
+        updateHistory = updateHistoryService.findByAssetIdAndCreateAt(updateHistory.getAssetId(), updateHistory.getCreateAt());
+        asset.setUpdateId(updateHistory.getId());
+        asset.setPrice(asset.getPrice()+ updateHistoryRequest.getValue());
+        asset.setTime(updateHistory.getAmountMonthPresent());
+        LocalDate localDate = LocalDate.from(asset.getDateUsed().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()).plusMonths(updateHistory.getAmountMonthPresent());
+        asset.setDateExperience(Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+        return asset;
     }
 }

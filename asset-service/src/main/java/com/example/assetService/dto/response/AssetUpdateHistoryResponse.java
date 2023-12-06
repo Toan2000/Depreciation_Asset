@@ -31,11 +31,11 @@ public class AssetUpdateHistoryResponse {
         private String updateDate;
         private Double value;
         private Double valuePrev;
-        private int amountMonth;
+        private Long amountMonth;
         private String note;
         private String status;
 
-        public UpdateHistoryResponse(Long historyId, UserResponse userUpdate, UserResponse userUsed, String requestDate, String updateDate, Double value, Double valuePrev, int amountMonth, String note,String status) {
+        public UpdateHistoryResponse(Long historyId, UserResponse userUpdate, UserResponse userUsed, String requestDate, String updateDate, Double value, Double valuePrev, Long amountMonth, String note,String status) {
             this.historyId = historyId;
             this.userUpdate = userUpdate;
             this.userUsed = userUsed;

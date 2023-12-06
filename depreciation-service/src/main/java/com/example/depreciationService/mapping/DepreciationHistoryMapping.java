@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Component
@@ -184,7 +183,27 @@ public class DepreciationHistoryMapping {
         return null;
 //        depreciationByAssetResponse.setValuePre(depreciationHistoryService.getValueHistoryByAsset(LocalDate.now().getMonthValue(),LocalDate.now().getYear(), assetId));
     }
-
+    public void addDepreciationHistory(Depreciation depreciation){
+        //Kéo lịch sử khấu hao
+        int month = depreciation.getFromDate().getMonth()+1;
+        LocalDate localDate = LocalDate.now();
+        Date today = new Date();
+            for (int i = depreciation.getFromDate().getYear(); i <=today.getYear(); i++){
+                for(int j = month; j<12;j++){
+                    if(j==today.getMonth()&&i==today.getYear())
+                        break;
+                    DepreciationHistory depreciationHistory = new DepreciationHistory();
+                    depreciationHistory.setCreateAt(new Date());
+                    depreciationHistory.setMonth(localDate.getMonthValue());
+                    depreciationHistory.setYear(today.getYear());
+                    depreciationHistory.setDepreciation(depreciation);
+                    depreciationHistory.setAssetId(depreciation.getAssetId());
+                    depreciationHistory.setAssetTypeId(depreciation.getAssetTypeId());
+                    depreciationHistory.setValue(depreciation.getValuePerMonth());
+                    depreciationHistoryService.saveDepreciationHistory(depreciationHistory);
+                }
+            }
+    }
 
     public List<DepreciationDeptResponse> getDepreciationDeptResponse(List<Object> data){
         List<DepreciationDeptResponse> depreciationDeptResponses = new ArrayList<>();

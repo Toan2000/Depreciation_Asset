@@ -97,9 +97,7 @@ public class AssetServiceImpl implements AssetService {
         String keyword = "%(";
         name = covertToString(name.toLowerCase());
         String[] parts = name.split(" ");
-        for(String key : parts){
-            keyword+=key+"|";
-        }
+        keyword+=String.join("|",parts);
         keyword+=")%";
         return assetRepository.filterAssets(keyword,deptId,userId, assetType,fromDate,toDate,status,pageable);
     }

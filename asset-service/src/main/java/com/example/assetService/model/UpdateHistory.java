@@ -26,9 +26,9 @@ public class UpdateHistory {
     @Column(name = "value_present")
     private Double valuePresent;
     @Column(name = "amount_month_prev")
-    private int amountMonthPrev;
+    private Long amountMonthPrev;
     @Column(name = "amount_month_present")
-    private int amountMonthPresent;
+    private Long amountMonthPresent;
     @Column(name = "note")
     private String note;
     @Column(name = "status")

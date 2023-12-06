@@ -17,8 +17,7 @@ public class DepreciationHistoryServiceImpl implements DepreciationHistoryServic
 
     @Override
     public boolean saveDepreciationHistory(DepreciationHistory depreciationHistory) {
-        if(depreciationHistoryRepository.save(depreciationHistory) == null)
-            return false;
+        depreciationHistoryRepository.save(depreciationHistory);
         return true;
     }
     @Override

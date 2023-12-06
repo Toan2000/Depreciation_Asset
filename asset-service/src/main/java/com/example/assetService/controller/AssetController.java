@@ -4,6 +4,7 @@ import com.example.assetService.client.AssetServiceClient;
 import com.example.assetService.dto.request.AssetRequest;
 import com.example.assetService.dto.request.DeliveryRequest;
 import com.example.assetService.dto.request.DepreciationRequest;
+import com.example.assetService.dto.request.UpdateHistoryRequest;
 import com.example.assetService.dto.response.AssetResponse;
 import com.example.assetService.dto.response.Response;
 import com.example.assetService.mapping.AssetMapping;
@@ -33,7 +34,6 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/api/asset")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000")
-
 public class AssetController {
     private final AssetService assetService;
     private final AssetMapping assetMapping;
@@ -190,7 +190,7 @@ public class AssetController {
         Asset asset = assetService.findAssetById(id);
         if(asset == null) return new ResponseEntity<>(new Response("Không tìm thấy tài sản",null),HttpStatus.NOT_FOUND);
         if(asset.getUserUsedId() != null) return new ResponseEntity<>(new Response("Tài sản đang được sử dụng",null),HttpStatus.NOT_FOUND);
-        asset = assetMapping.updateAsset(asset,deliveryRequest);
+        asset = assetMapping.deliveryAsset(asset,deliveryRequest);
         if(asset == null) return new ResponseEntity<>(new Response("Bàn giao tài sản thất bại",null),HttpStatus.NOT_FOUND);
         assetService.createAsset(asset);
         return new ResponseEntity<>(new Response("Cập nhật thông tin thành công",null),HttpStatus.OK);
@@ -231,7 +231,19 @@ public class AssetController {
         }
         return new ResponseEntity(value,HttpStatus.OK);
     }
-
+    @PutMapping("/update/{id}")
+    public ResponseEntity updateAsset(@PathVariable Long id,@RequestBody UpdateHistoryRequest updateHistoryRequest) throws ParseException {
+        Asset asset = assetService.findAssetById(id);
+        if(asset == null)
+            return new ResponseEntity("Tài sản không tồn tại",HttpStatus.NOT_FOUND);
+        if(asset.getUserUsedId() != null|| asset.getDeptUsedId() != null)
+            return new ResponseEntity("Tài sản vẫn còn đang sử dụng", HttpStatus.NOT_ACCEPTABLE);
+        asset = assetMapping.updateAsset(asset,updateHistoryRequest);
+        if(assetService.createAsset(asset)){
+            return new ResponseEntity("Nâng cấp tài sản thành công",HttpStatus.OK);
+        }
+        return new ResponseEntity("Nâng cấp tài sản thất bại",HttpStatus.OK);
+    }
 
 
     //Hàm tính khấu hao theo hai ngày trong 1 tháng

@@ -55,24 +55,6 @@ public class DepreciationMapping {
                 depreciationHistory.setValue((localDate.lengthOfMonth()-localDate.getDayOfMonth()+1)*depreciation.getValuePerMonth());
                 depreciationHistoryService.saveDepreciationHistory(depreciationHistory);
             }
-            //Kéo lịch sử khấu hao
-            int month = depreciation.getFromDate().getMonth()+1;
-            for (int i = depreciation.getFromDate().getYear(); i <=today.getYear(); i++){
-                for(int j = month; j<12;j++){
-                    if(j==today.getMonth()&&i==today.getYear())
-                        break;
-                    DepreciationHistory depreciationHistory = new DepreciationHistory();
-                    depreciationHistory.setCreateAt(new Date());
-                    depreciationHistory.setMonth(localDate.getMonthValue());
-                    depreciationHistory.setYear(today.getYear());
-                    depreciationHistory.setDepreciation(depreciation);
-                    depreciationHistory.setAssetId(depreciation.getAssetId());
-                    depreciationHistory.setAssetTypeId(depreciation.getAssetTypeId());
-                    depreciationHistory.setValue(depreciation.getValuePerMonth());
-                    depreciationHistoryService.saveDepreciationHistory(depreciationHistory);
-                }
-
-            }
         }
         else depreciation.setValuePerMonth(assetResponse.getPrice()/assetResponse.getAmountOfYear());
         depreciation.setUserId(depreciationRequest.getUserId());

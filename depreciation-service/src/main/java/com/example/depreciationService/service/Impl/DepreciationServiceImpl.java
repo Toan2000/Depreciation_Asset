@@ -36,11 +36,8 @@ public class DepreciationServiceImpl implements DepreciationService {
     }
 
     @Override
-    public boolean saveDepreciation(Depreciation depreciation ){
-        Depreciation temp = depreciationRepository.save(depreciation);
-        if(temp != null)
-            return true;
-        return false;
+    public Depreciation saveDepreciation(Depreciation depreciation ){
+        return depreciationRepository.save(depreciation);
     }
     @Override
     public Page<Depreciation> getAllDepreciation(int page,int size){

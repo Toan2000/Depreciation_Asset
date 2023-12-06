@@ -38,9 +38,9 @@ public class DepreciationController {
             return new ResponseEntity(new String("Thông tin khấu hao đã tồn tại"), HttpStatus.NOT_ACCEPTABLE);
         Object object = depreciationService.findLDateAndSumValueByAssetId(depreciationRequest.getAssetId());
         Depreciation depreciationRecords = depreciationMapping.requestToEntity(depreciationRequest, object);
-        if(depreciationService.saveDepreciation(depreciationRecords))
-            return new ResponseEntity(new String("Thông tin khấu hao đã được tạo"), HttpStatus.CREATED);
-        return new ResponseEntity(new String("Thông tin khấu hao chưa được tạo"),HttpStatus.NOT_ACCEPTABLE);
+        Depreciation depreciation1 = depreciationService.saveDepreciation(depreciationRecords);
+        depreciationHistoryMapping.addDepreciationHistory(depreciation1);
+        return new ResponseEntity(new String("Thông tin khấu hao đã được tạo"), HttpStatus.CREATED);
     }
 
     //API Thực hiện tính toán và ngưng khấu hao
@@ -48,10 +48,8 @@ public class DepreciationController {
     public ResponseEntity updateDepreciation(@PathVariable Long id) throws ParseException {
         Depreciation depreciation = depreciationService.findDepreciationToUpdate(id);
         depreciation = depreciationMapping.updateDepreciation(depreciation);
-        if(depreciationService.saveDepreciation(depreciation)){
+        depreciationService.saveDepreciation(depreciation);
             return new ResponseEntity(true, HttpStatus.CREATED);
-        }
-        return new ResponseEntity(false,HttpStatus.NOT_ACCEPTABLE);
     }
     //Đếm các giá trị khấu hao đến hiện tại
     @GetMapping("/count")

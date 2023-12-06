@@ -19,7 +19,7 @@ public interface DepreciationService {
 
     Depreciation findByAssetIdAndToDate(Long assetId, Date date);
 
-    boolean saveDepreciation(Depreciation depreciation);
+    Depreciation saveDepreciation(Depreciation depreciation);
 
     Page<Depreciation> getAllDepreciation(int page, int size);
 

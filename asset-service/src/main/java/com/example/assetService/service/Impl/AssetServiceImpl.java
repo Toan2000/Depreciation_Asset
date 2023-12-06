@@ -99,6 +99,7 @@ public class AssetServiceImpl implements AssetService {
         String[] parts = name.split(" ");
         keyword+=String.join("|",parts);
         keyword+=")%";
+        System.out.println(keyword);
         return assetRepository.filterAssets(keyword,deptId,userId, assetType,fromDate,toDate,status,pageable);
     }
 

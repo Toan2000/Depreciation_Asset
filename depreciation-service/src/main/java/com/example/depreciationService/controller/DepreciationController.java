@@ -33,13 +33,14 @@ public class DepreciationController {
     //Tạo thông tin khấu hao
     @PostMapping("/create")
     public ResponseEntity saveDepreciation(@RequestBody DepreciationRequest depreciationRequest) throws ParseException {
-        Depreciation depreciation = depreciationService.findByAssetIdAndToDate(depreciationRequest.getAssetId(), null);
+        Depreciation depreciation = depreciationService.findByAssetIdAndToDate(depreciationRequest.getAssetId());
         if(depreciation!=null)
             return new ResponseEntity(new String("Thông tin khấu hao đã tồn tại"), HttpStatus.NOT_ACCEPTABLE);
         Object object = depreciationService.findLDateAndSumValueByAssetId(depreciationRequest.getAssetId());
         Depreciation depreciationRecords = depreciationMapping.requestToEntity(depreciationRequest, object);
-        Depreciation depreciation1 = depreciationService.saveDepreciation(depreciationRecords);
-        depreciationHistoryMapping.addDepreciationHistory(depreciation1);
+        Depreciation depreciationAdded = depreciationService.saveDepreciation(depreciationRecords);
+        //Thêm lịch sử khấu hao nếu mất tháng
+        depreciationHistoryMapping.addDepreciationHistory(depreciationAdded);
         return new ResponseEntity(new String("Thông tin khấu hao đã được tạo"), HttpStatus.CREATED);
     }
 
@@ -47,6 +48,8 @@ public class DepreciationController {
     @GetMapping("/recall/{id}")
     public ResponseEntity updateDepreciation(@PathVariable Long id) throws ParseException {
         Depreciation depreciation = depreciationService.findDepreciationToUpdate(id);
+        if(depreciation == null)
+            return new ResponseEntity("Thông tin khấu hao không tồn tại", HttpStatus.NOT_FOUND);
         depreciation = depreciationMapping.updateDepreciation(depreciation);
         depreciationService.saveDepreciation(depreciation);
             return new ResponseEntity(true, HttpStatus.CREATED);

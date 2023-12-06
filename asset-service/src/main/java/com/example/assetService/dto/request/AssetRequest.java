@@ -18,4 +18,5 @@ public class AssetRequest {
     private String serial;
     private Long brandId;
     private Long storageId;
+    private String image;
 }

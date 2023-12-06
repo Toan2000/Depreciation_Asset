@@ -31,7 +31,7 @@ public interface AssetRepository extends JpaRepository<Asset,Long> {
 
     @Query(value = "SELECT * \n" +
             "FROM public.assets a \n" +
-            "WHERE (?1 = 'NAMENULL' OR (converttvkdau(lower(a.asset_name)) SIMILAR TO ?1))\n" +
+            "WHERE (?1 = '%(namenull)%' OR (converttvkdau(lower(a.asset_name)) SIMILAR TO ?1))\n" +
             "AND (?2 = -1 OR a.dept_used_id = ?2) \n" +
             "AND (?3 = -1 OR a.user_used_id = ?3)\n" +
             "AND (?4 = -1 OR a.asset_type = ?4)\n" +

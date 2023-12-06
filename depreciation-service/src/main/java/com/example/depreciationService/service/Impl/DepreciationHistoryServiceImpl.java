@@ -96,7 +96,7 @@ public class DepreciationHistoryServiceImpl implements DepreciationHistoryServic
 
     @Override
     public Double totalValueDepreciationByDepreciationId(Long depreciationId, int month, int year) {
-        return depreciationHistoryRepository.totalValueDepreciationByAssetId(depreciationId, month, year);
+        return depreciationHistoryRepository.totalValueDepreciationByDepreciationId(depreciationId, month, year);
     }
 
     @Override

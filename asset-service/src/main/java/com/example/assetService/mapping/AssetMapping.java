@@ -46,6 +46,7 @@ public class AssetMapping {
         assetResponse.setAssetTypeId(asset.getAssetType());
         AssetType assetType = assetTypeService.findAssetTypeById(asset.getAssetType());
         assetResponse.setAssetTypeName(assetType.getAssetName());
+        assetResponse.setUpdateId(asset.getUpdateId());
         assetResponse.setAssetImage(asset.getAssetImage());
         assetResponse.setAmountOfYear(assetType.getAmountOfYear());
         assetResponse.setAssetGroupId(assetType.getAssetGroup().getId());
@@ -95,6 +96,7 @@ public class AssetMapping {
         asset.setSerialNumber(assetRequest.getSerial());
         asset.setBrandId(assetRequest.getBrandId());
         asset.setStorageId(assetRequest.getStorageId());
+        asset.setAssetImage(asset.getAssetImage());
         return asset;
     }
     //Thay đổi thông tin người sử dụng tài sản

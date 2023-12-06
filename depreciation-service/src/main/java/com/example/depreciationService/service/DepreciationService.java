@@ -17,7 +17,7 @@ public interface DepreciationService {
 
     List<Depreciation> findByAssetIdOrderByIdAsc(Long assetId);
 
-    Depreciation findByAssetIdAndToDate(Long assetId, Date date);
+    Depreciation findByAssetIdAndToDate(Long assetId);
 
     Depreciation saveDepreciation(Depreciation depreciation);
 

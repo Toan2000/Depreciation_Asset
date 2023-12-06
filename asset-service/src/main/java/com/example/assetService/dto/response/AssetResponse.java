@@ -21,6 +21,7 @@ public class AssetResponse {
     private int amountOfYear;
     private int assetGroupId;
     private Long assetBrandId;
+    private Long updateId;
     private String assetBrandName;
     private Long assetStorageId;
     private String assetStorageName;

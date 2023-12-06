@@ -26,8 +26,9 @@ public interface DepreciationRepository extends JpaRepository<Depreciation,Long>
             "WHERE asset_id = ?1 " +
             "GROUP BY asset_id",nativeQuery = true)
     Object findLastDepreciationByAssetId(Long assetId);
-    Depreciation findByAssetIdAndToDate(Long assetId, Date date);
-//    @Query
-//    List<Object> countDepreciation();
+    @Query(value = "SELECT *\n" +
+            "FROM public.depreciation\n" +
+            "WHERE to_date IS NULL AND asset_id = ?1",nativeQuery = true)
+    Optional<Depreciation> findByAssetIdAndToDate(Long assetId);
 
 }

@@ -31,8 +31,11 @@ public class DepreciationServiceImpl implements DepreciationService {
     }
 
     @Override
-    public Depreciation findByAssetIdAndToDate(Long assetId, Date date) {
-        return depreciationRepository.findByAssetIdAndToDate(assetId,date);
+    public Depreciation findByAssetIdAndToDate(Long assetId) {
+        Optional<Depreciation> depreciation = depreciationRepository.findByAssetIdAndToDate(assetId);
+        if(depreciation.isEmpty())
+            return null;
+        return depreciation.get();
     }
 
     @Override

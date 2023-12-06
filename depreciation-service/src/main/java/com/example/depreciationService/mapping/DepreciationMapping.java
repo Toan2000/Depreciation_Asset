@@ -38,23 +38,26 @@ public class DepreciationMapping {
         depreciation.setExpDate(dateFormat.parse(assetResponse.getExpDate()));
         //Ngưng khấu hao đợt trước và gán khấu hao từ sau ngày kết thúc
         if(object != null){
+            //Ngày khấu hao cuối cùng
             Date lDate = dateFormat.parse(((Object[])object)[1].toString());
-            depreciation.setValuePerMonth(commonMapping.calculatorDepreciationPerMonth(assetResponse,Double.valueOf(((Object[])object)[2].toString()), dateFormat.format(lDate)));
+            //Giá trị đã khấu hao
+            Double valuePrev = Double.valueOf(((Object[])object)[2].toString());
+            depreciation.setValuePerMonth(commonMapping.calculatorDepreciationPerMonth(assetResponse,valuePrev, dateFormat.format(lDate)));
             LocalDate localDate = lDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().plusDays(1);
             depreciation.setFromDate(Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-            //Kiểm tra lịch sử khấu hao đã qua tháng mới chưa
-            Date today = new Date();
-            if(today.after(dateFormat.parse(localDate.getYear()+"-"+localDate.getMonthValue()+"-"+localDate.lengthOfMonth()))){
-                DepreciationHistory depreciationHistory = new DepreciationHistory();
-                depreciationHistory.setCreateAt(new Date());
-                depreciationHistory.setMonth(localDate.getMonthValue());
-                depreciationHistory.setYear(today.getYear());
-                depreciationHistory.setDepreciation(depreciation);
-                depreciationHistory.setAssetId(depreciation.getAssetId());
-                depreciationHistory.setAssetTypeId(depreciation.getAssetTypeId());
-                depreciationHistory.setValue((localDate.lengthOfMonth()-localDate.getDayOfMonth()+1)*depreciation.getValuePerMonth());
-                depreciationHistoryService.saveDepreciationHistory(depreciationHistory);
-            }
+//            //Kiểm tra lịch sử khấu hao đã qua tháng mới chưa
+//            Date today = new Date();
+//            if(today.after(dateFormat.parse(localDate.getYear()+"-"+localDate.getMonthValue()+"-"+localDate.lengthOfMonth()))){
+//                DepreciationHistory depreciationHistory = new DepreciationHistory();
+//                depreciationHistory.setCreateAt(new Date());
+//                depreciationHistory.setMonth(localDate.getMonthValue());
+//                depreciationHistory.setYear(today.getYear());
+//                depreciationHistory.setDepreciation(depretion);
+//                depreciationHistory.setAssetId(depreciation.getAssetId());
+//                depreciationHistory.setAssetTypeId(depreciation.getAssetTypeId());
+//                depreciationHistory.setValue((localDate.lengthOfMonth()-localDate.getDayOfMonth()+1)*depreciation.getValuePerMonth());
+//                depreciationHistoryService.saveDepreciationHistory(depreciationHistory);
+//            }
         }
         else depreciation.setValuePerMonth(assetResponse.getPrice()/assetResponse.getAmountOfYear());
         depreciation.setUserId(depreciationRequest.getUserId());

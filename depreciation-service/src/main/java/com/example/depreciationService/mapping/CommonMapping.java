@@ -17,18 +17,15 @@ public class CommonMapping {
         //Lấy thông tin tài sản và thời gian
         Date lDate = new SimpleDateFormat("yyyy-MM-dd").parse(lastDate);
         Date eDate = new SimpleDateFormat("yyyy-MM-dd").parse(asset.getExpDate());
-        //Tính số ngày trong tháng
-        int daysInMonthLDate = LocalDate.from(lDate.toInstant().atZone(ZoneId.systemDefault())).lengthOfMonth();
-        int daysInMonthEDate = LocalDate.from(eDate.toInstant().atZone(ZoneId.systemDefault())).lengthOfMonth();
-        //Tính số tháng còn lại
-        int amountMonth = (lDate.getDate() >= daysInMonthLDate/2 ? 0 : 1)
+        //Tính số tháng còn lại cần khấu hao
+        int amountMonth = 1
                 + (11 - lDate.getMonth())
                 + (eDate.getYear() - lDate.getYear() -1)*12
                 + (eDate.getMonth())
-                + (eDate.getDate() > daysInMonthEDate/2 ? 1: 0);
+                + 1;
         //Kiểm tra tài sản có nâng cấp hay không
         if(asset.getUpdateId()!=null){
-            return (asset.getPrice() - value)/amountMonth;
+            return (asset.getPrice() - value)/Double.valueOf(amountMonth);
         }
         return asset.getPrice()/asset.getAmountOfYear();
     }

@@ -67,8 +67,8 @@ public class AssetMapping {
         assetResponse.setUserIdUsed(asset.getUserUsedId());
         if(asset.getDateExperience()!=null)
             assetResponse.setExpDate(dateFormat.format(asset.getDateExperience()));
-        else
-            assetResponse.setExpDate("Chưa sử dụng");
+//        else
+//            assetResponse.setExpDate("Chưa sử dụng");
         assetResponse.setDeptIdUsed(asset.getDeptUsedId());
         assetResponse.setSerial(asset.getSerialNumber());
         Brand brand = brandService.findById(asset.getBrandId());

@@ -26,9 +26,9 @@ public class DepreciationHistoryController {
     public ResponseEntity getDepreciationValueAllDept(@RequestParam int year, @RequestParam(required = false) List<Long> ids){
         List<Object> records = new ArrayList<>();
         if(ids.size()==1&&ids.get(0)==0)
-            records = depreciationHistoryService.getDepreciationByDeptIds(year,ids);
-        else
             records = depreciationHistoryService.getDepreciationByAllDept(year);
+        else
+            records = depreciationHistoryService.getDepreciationByDeptIds(year,ids);
         return new ResponseEntity(depreciationHistoryMapping.getDepreciationDeptResponse(records), HttpStatus.OK);
     }
     @GetMapping("/test")

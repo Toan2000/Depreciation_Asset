@@ -39,6 +39,7 @@ public class AssetMapping {
     private final AccesaryService accesaryService;
     private final AssetDeliveryService assetDeliveryService;
     private final UpdateHistoryService updateHistoryService;
+    // Tạo thông tin response cho tài sản
     public AssetResponse getAssetResponse(Asset asset) {
         AssetResponse assetResponse = new AssetResponse();
         assetResponse.setAssetId(asset.getAssetId());
@@ -53,7 +54,6 @@ public class AssetMapping {
         assetResponse.setAssetGroup(assetType.getAssetGroup().getName());
         assetResponse.setPrice(asset.getPrice());
         assetResponse.setStatus(asset.getAssetStatus());
-
         switch (Math.toIntExact(asset.getAssetStatus())){
             case 0: assetResponse.setStatusName("Chưa sử dụng");break;
             case 1: assetResponse.setStatusName("Đang sử dụng");break;
@@ -62,13 +62,9 @@ public class AssetMapping {
         assetResponse.setDateInStored(dateFormat.format(asset.getDateInStored()));
         if(asset.getDateUsed() != null)
             assetResponse.setDateUsed(dateFormat.format(asset.getDateUsed()));
-        else
-            assetResponse.setDateUsed("Chưa sử dụng");
         assetResponse.setUserIdUsed(asset.getUserUsedId());
         if(asset.getDateExperience()!=null)
             assetResponse.setExpDate(dateFormat.format(asset.getDateExperience()));
-//        else
-//            assetResponse.setExpDate("Chưa sử dụng");
         assetResponse.setDeptIdUsed(asset.getDeptUsedId());
         assetResponse.setSerial(asset.getSerialNumber());
         Brand brand = brandService.findById(asset.getBrandId());
@@ -84,6 +80,7 @@ public class AssetMapping {
         return assetResponse;
     }
 
+    //Lấy thông tin tài sản từ Request đầu vào
     public Asset getAsset(AssetRequest assetRequest){
         Asset asset = new Asset();
         asset.setDateInStored(new Date());
@@ -108,7 +105,6 @@ public class AssetMapping {
         asset.setAssetStatus(Long.valueOf(1));
         if(asset.getDateUsed()==null){
             LocalDate localDate = LocalDate.now();
-            System.out.println(asset.getDateUsed());
             Date expDate = Date.from(localDate.plusMonths(asset.getTime()).atStartOfDay(ZoneId.systemDefault()).toInstant());
             asset.setDateExperience(expDate);
         }

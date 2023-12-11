@@ -23,7 +23,6 @@ import java.util.*;
 @RestController
 @RequestMapping("/api/depreciation")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
 
 public class DepreciationController {
     private final DepreciationMapping depreciationMapping;

@@ -91,6 +91,8 @@ public class AssetMapping {
         asset.setAssetStatus(assetRequest.getStatus());
         asset.setPrice(assetRequest.getPrice());
         asset.setSerialNumber(assetRequest.getSerial());
+        asset.setAssetImage(assetRequest.getImage());
+        asset.setAssetStatus(Long.valueOf(0));
         asset.setBrandId(assetRequest.getBrandId());
         asset.setStorageId(assetRequest.getStorageId());
         asset.setAssetImage(asset.getAssetImage());
@@ -231,7 +233,10 @@ public class AssetMapping {
             deliveryHistory.setUserResponse(userResponse);
             UserResponse userCreate = assetServiceClient.fetchUser(assetDelivery.getUserCreateId());
             deliveryHistory.setUserCreateResponse(userCreate);
-            deliveryHistory.setDeliveryType("Cấp phát");
+            if(assetDelivery.getDeliveryType() == 0)
+                deliveryHistory.setDeliveryType("Cấp phát");
+            else
+                deliveryHistory.setDeliveryType("Thu hồi");
             deliveryHistory.setStatus(assetDelivery.getStatus());
             deliveryHistory.setNote(assetDelivery.getNote());
             listDelivery.add(deliveryHistory);

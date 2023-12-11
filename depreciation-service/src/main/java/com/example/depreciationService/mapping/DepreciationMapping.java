@@ -90,6 +90,8 @@ public class DepreciationMapping {
         int amountMonth = 0;
         //Tính lại giá trị đã khấu hao
         Double value = depreciationHistoryService.totalValueDepreciationByDepreciationId(depreciation.getId(),endDate.getMonth()+1,endDate.getYear()+1900);
+        if(value ==null)
+            value = 0.0;
         Double valueInMonth = 0.0;
         if(depreciation.getExpDate().before(sDate)){
             valueInMonth= 0.0;

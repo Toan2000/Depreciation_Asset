@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@CrossOrigin(origins = "http://localhost:3000")
-
 public class ApiGateWayApplication {
     public static void main(String[] args) {
         SpringApplication.run(ApiGateWayApplication.class,args);

@@ -34,13 +34,17 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @RequestMapping("/api/asset")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
 public class AssetController {
     @Autowired
     AssetService assetService;
-    private final AssetMapping assetMapping;
-    private final AssetTypeService assetTypeService;
-    private final UpdateHistoryService updateHistoryService;
+    @Autowired
+    AssetMapping assetMapping;
+    @Autowired
+    AssetTypeService assetTypeService;
+    @Autowired
+    UpdateHistoryService updateHistoryService;
+
+    //API GET ASSET DATA V0
     // Lấy tất cả thông tin tài sản trong DB
     @GetMapping("")
     public ResponseEntity<Response> getAllAsset(@RequestParam(defaultValue = "0") int page,
@@ -161,6 +165,10 @@ public class AssetController {
         data.put("totalPage",assets.getTotalPages());
         return new ResponseEntity<>(new Response("Danh sách tài sản",data),HttpStatus.OK);
     }
+
+
+
+    //API GET ASSET DATA V1
     //Bộ lọc tài sản
     @GetMapping("/filter")
     public ResponseEntity<Response> filterAssets(@RequestParam(defaultValue = "NAMENULL") String name,
@@ -189,7 +197,7 @@ public class AssetController {
     public ResponseEntity<?> uploadAssetsData(@RequestParam("file") MultipartFile file){
         assetService.saveAssetsToDatabase(file);
         return ResponseEntity
-                .ok(Map.of("Message" , " Assets data uploaded and saved to database successfully"));
+                .ok(Map.of("message" , "Thêm tài sản thành công"));
     }
     //Tạo thông tin tài sản thông qua Records
     @PostMapping("/create")

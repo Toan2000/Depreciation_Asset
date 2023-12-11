@@ -276,9 +276,10 @@ public class DepreciationHistoryMapping {
             if(assetType == null) {
                 assetType = new AssetType();
                 assetType.setTypeId(assetTypeId);
+                Double valueTypePrev = depreciationHistoryService.getTotalValueByDeptIdAndAssetType(deptId,assetTypeId, year);
                 AssetTypeResponse assetTypeResponse = depreciationServiceClient.fetchAssetType(assetTypeId);
                 assetType.setTypeName(assetTypeResponse.getAssetName());
-                assetType.setDepreciationPrev(valuePrev);
+                assetType.setDepreciationPrev(valueTypePrev);
                 assetType.setTotalPrice(value);
                 assetType.getMonths().put(String.valueOf(month),value);
                 assetTypes.add(assetType);

@@ -16,7 +16,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/depreciation/history")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
 public class DepreciationHistoryController {
     private final DepreciationHistoryService depreciationHistoryService;
     private final DepreciationHistoryMapping depreciationHistoryMapping;

@@ -10,4 +10,5 @@ import java.util.List;
 @Component
 public interface AccesaryService {
     List<Accessary> findByAssetId(Long id);
+    Accessary save(Accessary accessary);
 }

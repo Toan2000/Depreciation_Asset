@@ -11,6 +11,7 @@ import com.example.assetService.mapping.AssetMapping;
 import com.example.assetService.model.Asset;
 import com.example.assetService.model.AssetType;
 import com.example.assetService.model.UpdateHistory;
+import com.example.assetService.service.AssetGroupService;
 import com.example.assetService.service.AssetService;
 import com.example.assetService.service.AssetTypeService;
 import com.example.assetService.service.UpdateHistoryService;
@@ -43,6 +44,8 @@ public class AssetController {
     AssetTypeService assetTypeService;
     @Autowired
     UpdateHistoryService updateHistoryService;
+    @Autowired
+    AssetGroupService assetGroupService;
 
     //API GET ASSET DATA V0
     // Lấy tất cả thông tin tài sản trong DB
@@ -191,6 +194,11 @@ public class AssetController {
         data.put("assets",assetResponses);
         data.put("totalPage",assets.getTotalPages());
         return new ResponseEntity<>(new Response("Danh sách tài sản",data),HttpStatus.OK);
+    }
+    //Thực hiện lấy thông tin các nhóm tài sản
+    @GetMapping("/group")
+    public ResponseEntity getGroupAsset(){
+        return new ResponseEntity<>(assetGroupService.getAllGroup(),HttpStatus.OK);
     }
     //Thực hiện tạo thông tin tài sản thông qua file Excel
     @PostMapping("/upload-assets-data")

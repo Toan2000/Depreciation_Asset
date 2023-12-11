@@ -19,7 +19,6 @@ public class AssetGroup {
     private int id;
     @Column(name="name")
     private String name;
-    @JsonIgnore
     @OneToMany(mappedBy = "assetGroup",cascade = CascadeType.ALL)
     private List<AssetType> listAssetType;
 }

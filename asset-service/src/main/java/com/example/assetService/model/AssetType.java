@@ -1,5 +1,6 @@
 package com.example.assetService.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,7 @@ public class AssetType {
     private String assetName;
     @Column(name = "amountOfYear")
     private int amountOfYear;
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "\"asset_group_id\"")
     private AssetGroup assetGroup;

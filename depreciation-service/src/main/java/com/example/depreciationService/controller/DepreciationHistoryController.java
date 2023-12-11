@@ -33,6 +33,6 @@ public class DepreciationHistoryController {
     @GetMapping("/test")
     public ResponseEntity getTest(@RequestParam String text) throws ParseException {
         depreciationHistoryTask.calculateDepreciationPerMonthTest(text);
-        return new ResponseEntity("aa",HttpStatus.OK);
+        return new ResponseEntity("Tính khấu hao thánh công",HttpStatus.OK);
     }
 }

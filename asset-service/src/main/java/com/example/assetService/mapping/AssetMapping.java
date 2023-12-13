@@ -308,6 +308,7 @@ public class AssetMapping {
         updateHistory.setAssetId(asset.getAssetId());
         updateHistory.setDateUpdate(dateFormat.parse(updateHistoryRequest.getDateUpdate()));
         updateHistory.setUserUpdateId(Long.valueOf(10));
+        updateHistory.setUserUsedId(Long.valueOf(1));
         updateHistory.setNote(updateHistoryRequest.getNote());
         updateHistory.setStatus(updateHistoryRequest.getStatus());
         updateHistory.setAmountMonthPresent(asset.getTime()+ updateHistoryRequest.getMonth());
